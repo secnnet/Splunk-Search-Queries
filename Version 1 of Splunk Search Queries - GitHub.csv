@@ -1,0 +1,1487 @@
+﻿Title,Description,Alert Type,Alert Expires,Search 
+ Finding Malicious Tools (90d),"The Splunk search query you provided looks for events in Splunk's indexed data that match the following criteria:
+
+The event's EventCode field has a value of 4663
+The event's ObjectName field contains a path that matches any of the following patterns:
+C\ProgramData*.rar
+C\ProgramData*.zip
+C\ProgramData*.7z
+In other words, the search is looking for instances where a file with a .rar, .zip, or .7z extension is accessed in the C:\ProgramData directory. The 4663 EventCode is related to Windows security audit events and is triggered when a user or process attempts to access an object (e.g., file, folder) and the object's access control list (ACL) indicates that the requested access is not allowed.
+
+Overall, this search query may be useful for detecting unauthorized attempts to access compressed file archives stored in a specific directory on Windows systems.",Always,24h,"EventCode=4663 (ObjectName=""C\\ProgramData\\*.rar"" OR ObjectName=""C\\ProgramData\\*.zip"" OR ObjectName=""C\\ProgramData\\*.7z"")"
+ Search for connections to associated URLs with the campaign,"This Splunk search query is used to gather information from web access logs that match the specified criteria. Specifically, it retrieves the minimum time of the event, the user, the destination URL, the HTTP method used, the accessed URL, the HTTP referrer, the user agent, the category, and the action taken on the accessed URL, from the datamodel named ""Web"".
+
+The search is filtered to only include logs where the destination URL matches one of the specified patterns and the HTTP referrer is not empty. The results are then grouped by the accessed URL, and only the fields Time, user, dest, url, method, referrer, userAgent, category, action are displayed.
+
+Finally, the minimum time is converted to human-readable format (using convert ctime function) and the output is displayed. The purpose of this search query could be to identify potential security threats, monitor website traffic, or perform analysis on web usage patterns.",Always,24h,"| tstats min(_time) AS Time 
+  values(Web.user) AS user 
+  values(Web.dest) AS dest 
+  values(Web.http_method) AS method 
+  values(Web.url) AS url 
+  values(Web.http_referrer) AS referrer 
+  values(Web.http_user_agent) AS userAgent 
+  values(Web.category) AS category 
+  values(Web.action) AS action 
+  FROM datamodel=Web 
+  WHERE Web.dest IN (
+    ""*mhdosoksaccf9sni9icp.appsync-api.eu-west-1.avsvmcloud.com*"",
+    ""*k5kcubuassl3alrf7gm3.appsync-api.eu-west-1.avsvmcloud.com*"",
+    ""*ihvpgv9psvq02ffo77et.appsync-api.us-east-2.avsvmcloud.com*"",
+    ""*gq1h856599gqh538acqn.appsync-api.us-west-2.avsvmcloud.com*"",
+    ""*7sbvaemscs0mc925tb99.appsync-api.us-west-2.avsvmcloud.com*"",
+    ""*6a57jk2ba1d9keg15cbg.appsync-api.eu-west-1.avsvmcloud.com*"",
+    ""*appsync-api.us-west-2.avsvmcloud.com*"",
+    ""*appsync-api.us-east-2.avsvmcloud.com*"",
+    ""*appsync-api.us-east-1.avsvmcloud.com*"",
+    ""*appsync-api.eu-west-1.avsvmcloud.com*"",
+    ""*5qbtj04rcbp3tiq8bo6t.appsync-api.us-east-1.avsvmcloud.com*"",
+    ""*6a57jk2ba1d9keg15cbg.appsync-api.eu-west-1.avsvmcloud.com*"",
+    ""*7sbvaemscs0mc925tb99.appsync-api.us-west-2.avsvmcloud.com*"",
+    ""*gq1h856599gqh538acqn.appsync-api.us-west-2.avsvmcloud.com*"",
+    ""*ihvpgv9psvq02ffo77et.appsync-api.us-east-2.avsvmcloud.com*"",
+    ""*k5kcubuassl3alrf7gm3.appsync-api.eu-west-1.avsvmcloud.com*"",
+    ""*mhdosoksaccf9sni9icp.appsync-api.eu-west-1.avsvmcloud.com*"",
+    ""*deftsecurity.com*"",
+    ""*freescanonline.com*"",
+    ""*thedoccloud.com*"",
+    ""*websitetheme.com*"",
+    ""*highdatabase.com*"",
+    ""*incomeupdate.com*"",
+    ""*databasegalore.com*"",
+    ""*panhardware.com*"",
+    ""*zupertech.com*"",
+    ""*digitalcollege.org*"",
+    ""*avsvmcloud.com*"",
+    ""*owa.organization.here*"",
+    ""*webcodez.com*"",
+    ""*virtualwebdata.com*"",
+    ""*solartrackingsystem.net*"",
+    ""*seobundlekit.com*"",
+    ""*lcomputers.com*"",
+    ""*kubecloud.com*"",
+    ""*globalnetworkissues.com*"",
+    ""*virtualdataserver.com*"",
+    ""*infinitysoftwares.com*"",
+    ""*ervsystem.com*""
+  ) 
+  AND Web.http_referrer IN (*) 
+  BY Web.url 
+| fields Time, user, dest, url, method, referrer, userAgent, category, action 
+| convert ctime(Time)"
+ Search for files,"This is a Splunk search query that searches through all the indexes (*) for events that contain any of the file paths or file names specified in the query.
+
+Specifically, it is looking for events that contain any of the following:
+
+""C\Users<user>\AppData\Roaming\pid.txt""
+""C\Users<user>\AppData\Roaming\pidloc.txt""
+""C\Users<user>\AppData\Local\Temp\holdermail.txt""
+""C\Users<user>\AppData\Local\Temp\holderwb.txt""
+""\Sys.exe""
+""\autorun.inf""
+""E\autorun.inf""
+""C\Users<user>\AppData\Local\Temp\SysInfo.txt""
+""C\Users<user>\AppData\Roaming\Windows Update.exe""
+""E\Sys.exe""
+""C\Users<user>\AppData\Local\Temp\subfolder""
+""C\Users<user>\AppData\Local\Temp\subfolder\filename.exe""
+""C\Users<user>\AppData\Local\Temp\subfolder\filename.vbs""
+""C\Users<user>\AppData\Local\Microsoft\Windows\WebCache\WebCacheV01.tmp""
+""C\Users<user>\AppData\Roaming\WindowsUpdate.exe""
+The search will return all events that contain any of these file paths or file names, regardless of the source or format of the event. The purpose of this search may be to identify potential security threats or suspicious activity on a system.",Always,24h,"index=* (""C\Users\<user>\AppData\Roaming\pid.txt"" OR ""C\Users\<user>\AppData\Roaming\pidloc.txt"" OR 
+""C\Users\<user>\AppData\Local\Temp\holdermail.txt"" OR ""C\Users\<user>\AppData\Local\Temp\holderwb.txt"" OR 
+""\Sys.exe"" OR ""\autorun.inf"" OR ""E\autorun.inf"" OR ""C\Users\<user>\AppData\Local\Temp\SysInfo.txt"" OR 
+""C\Users\<user>\AppData\Roaming\Windows Update.exe"" OR ""E\Sys.exe"" OR 
+""C\Users\<user>\AppData\Local\Temp\subfolder"" OR 
+""C\Users\<user>\AppData\Local\Temp\subfolder\filename.exe"" OR 
+""C\Users\<user>\AppData\Local\Temp\subfolder\filename.vbs"" OR 
+""C\Users\<user>\AppData\Local\Microsoft\Windows\WebCache\WebCacheV01.tmp"" OR 
+""C\Users\<user>\AppData\Roaming\WindowsUpdate.exe"")"
+ Search for hashes,"This Splunk search query searches for events in any index that contain any of the listed values in the parentheses. The values in the parentheses are 10 different hash values that may represent file or system artifacts. This search query is likely being used to identify any events that are associated with these specific hash values, which could potentially be used to detect malicious activity.",Always,24h,"index=* (0d4e850f6a4dfa6dc74f8770d6293c37a2a1df3bcf8bbac8ed5eebd7041cdf2e OR
+          4496ce4c4eb7baa7ba7cac5a30d632db25143d89462ee4a885fbaf3752caec8d OR
+          5983ce394d98d07d267d563496f4d444eaeb17e5fd9d2dd517b92145598d27ec OR
+          5c2d0070ab7f93ddee20bbb6f38e60d994bcc3e256658c31a6ce8a033767a81e OR
+          7d8dafc1e315b3adf788763ad0792e1c6e3cc0925f80b5bde41509858470b432 OR
+          88f75d07e5f0b4f18651380e891d02b4980de66351c97a7bd766a9e6065452d8 OR
+          93b1a9aa9be7e72eaed6ba8de581f9e73020fe70f021912e2e3ec956bd5171d9 OR
+          94a3fbed738a7683435d72e0082c6c56a8472fb289ecda7e93055d69fb7f0117 OR
+          dcab4d6f0691ce5b507470e879ffb9abfbe4039a52ebe0f4d5293e901c53e458 OR
+          f264c1d4f641bb0063a6760ac36dcf6df08f01398bdf013e70ce14bfeea0322e)"
+ Search for inbound traffic from malicious IPS,"This Splunk search query is used to retrieve network traffic data from the ""Network_Traffic"" datamodel. The query retrieves the values of the following fields from the data model: user, source IP address, source port, destination IP address, destination port, direction and action.
+
+The search is filtered to only include traffic where the source IP address is any IP address and the destination IP address is one of the specific IP addresses listed in the WHERE clause. The destination port is not filtered and can be any port.
+
+Finally, the search results are grouped by destination IP address and action and the specified fields (user, sourceIP, sourcePort, destinationIP, destinationPort, direction, and action) are displayed in the output.
+
+Overall, this search query could be used to investigate network traffic patterns between the specified IP addresses and help to identify any potential security threats or anomalies.",Always,24h,"| tstats values(All_Traffic.user) AS user, values(All_Traffic.src_ip) AS sourceIP,
+        values(All_Traffic.src_port) AS sourcePort, values(All_Traffic.dest_ip) AS destinationIP,
+        values(All_Traffic.dest_port) AS destinationPort, values(All_Traffic.direction) AS direction,
+        values(All_Traffic.action) AS action 
+    FROM datamodel=Network_Traffic 
+    WHERE All_Traffic.src_ip IN (*) 
+        AND All_Traffic.dest_ip IN (51.89.125.18, 5.252.177.25, 5.252.177.21, 204.188.205.176, 139.99.115.204, 167.114.213.199, 13.59.205.66, 54.193.127.66, 54.215.192.52, 34.203.203.23, 139.99.115.204, 8.18.145.0, 196.203.11.89, 20.141.48.154, 51.89.125.18, 8.18.145.131, 8.18.145.21, 8.18.145.3, 8.18.145.33, 18.217.225.111, 184.72.145.34, 184.72.209.33, 184.72.21.54, 184.72.1.3, 184.72.101.22, 184.72.113.55, 184.72.212.52, 184.72.224.3, 184.72.240.3, 184.72.229.1, 184.72.245.1, 184.72.48.22, 3.16.81.254, 3.87.182.149, 34.219.234.134, 8.18.145.134, 8.18.144.9, 8.18.145.139, 8.18.145.150, 8.18.145.157, 8.18.145.36) 
+        AND All_Traffic.dest_port IN (*)
+    BY All_Traffic.dest_ip, All_Traffic.action
+| fields user, sourceIP, sourcePort, destinationIP, destinationPort, direction, action"
+ Search for IPS,"The Splunk search query you provided will search for events in the indexes ""prod_checkpoint,"" ""prod_cisco_asa,"" and ""prod_censornet"" that contain any of the IP addresses ""184.105.192.2,"" ""40.70.224.146,"" or ""204.79.197.200."" It will then create a table with the following fields for each matching event: category, sourcetype, index, url, user, cs_host, c_ip, time, date, action, dest, dvc, and site.
+
+In other words, the query is looking for events that match a specific set of criteria and then displaying certain fields of information from those events in a table format. This type of query is commonly used in security analysis and troubleshooting to investigate specific events or patterns of activity within a system or network.",Always,24h,"index=prod_checkpoint OR index=prod_cisco_asa OR index=prod_censornet 
+(""184.105.192.2"" OR ""40.70.224.146"" OR ""204.79.197.200"") 
+| table category, sourcetype, index, url, user, cs_host, c_ip, time, date, action, dest, dvc, site"
+ Search for known malicious service installation,"This Splunk search query searches three different indexes (""prod_windows"", ""prod_windows_ad"", and ""prod_aws"") for events with the EventCode value of 7045. It then uses the ""eventstats"" command to calculate a count of these events grouped by the ""Service_File_Name"" field.
+
+Next, it filters the results to only include those where the count value is less than 5, using the ""search"" command. It then uses the ""convert"" command to convert the timestamp field (_time) to a human-readable format (day/month/year hour:minute:second).
+
+Finally, the ""stats"" command aggregates the results by the ""ComputerName"" field and provides values for several fields including Time, EventCode, Sid, OpCode, Service_Name, Service_File_Name, Service_Start_Type, and Service_Type. The resulting output will show the values for these fields grouped by the ComputerName field.
+
+Overall, this search query is designed to find events related to service control manager operations on Windows computers across multiple indexes and provide a summary of these events grouped by computer names.",Always,24h,"index=prod_windows OR index=prod_windows_ad OR index=prod_aws EventCode=7045 
+| eventstats count as val by Service_File_Name 
+| search val < 5 
+| convert ctime(_time) as Time timeformat=""%d/%m/%y %H%M%S"" 
+| stats values(Time) values(EventCode) values(Sid) values(OpCode) values(Service_Name) values(Service_File_Name) values(Service_Start_Type) values(Service_Type) by ComputerName"
+ Search for Nishang PowerShell Framework (90d),"This Splunk search query searches for events in the Windows event logs in the prod_windows and prod_windows_ad indexes as well as the test_windows_iis index, where the sourcetype is set to WinEventLog and the EventCode is equal to 4104.
+
+Furthermore, it narrows down the search results to those that contain the string Invoke-PowerShellTCP somewhere in the event message.
+
+In summary, this query is searching for events in specific Windows event logs related to PowerShell TCP invocations.",Always,24h,"index=prod_windows OR index=prod_windows_ad OR index=test_windows_iis sourcetype=""WinEventLog"" EventCode=4104 ""*Invoke-PowerShellTCP*"""
+ Search for outbound traffic to malicious IPS,"This is a Splunk search query that retrieves network traffic data from the Network_Traffic data model, and filters the results to show traffic where the source IP address is any address (*), and the destination IP address is one of a specified list of addresses.
+
+The query retrieves the values of several fields for this traffic, including the user, source IP address, source port, destination IP address, destination port, direction, and action. It groups the results by destination IP address and action, and then displays the fields specified in the ""fields"" command at the end of the query.
+
+Overall, the query is useful for investigating network traffic to a specific set of destination IP addresses and understanding the actions taken on that traffic.",Always,24h,"| tstats values(All_Traffic.user) AS user, 
+         values(All_Traffic.src_ip) AS sourceIP, 
+         values(All_Traffic.src_port) AS sourcePort, 
+         values(All_Traffic.dest_ip) AS destinationIP, 
+         values(All_Traffic.dest_port) AS destinationPort, 
+         values(All_Traffic.direction) AS direction, 
+         values(All_Traffic.action) AS action 
+  FROM datamodel=Network_Traffic 
+  WHERE All_Traffic.src_ip IN (*) 
+    AND All_Traffic.dest_ip IN (51.89.125.18,
+                                5.252.177.25,
+                                5.252.177.21,
+                                204.188.205.176,
+                                139.99.115.204,
+                                167.114.213.199,
+                                13.59.205.66,
+                                54.193.127.66,
+                                54.215.192.52,
+                                34.203.203.23,
+                                8.18.145.0,
+                                196.203.11.89,
+                                20.141.48.154,
+                                8.18.145.131,
+                                8.18.145.21,
+                                8.18.145.3,
+                                8.18.145.33,
+                                18.217.225.111,
+                                184.72.145.34,
+                                184.72.209.33,
+                                184.72.21.54,
+                                184.72.1.3,
+                                184.72.101.22,
+                                184.72.113.55,
+                                184.72.212.52,
+                                184.72.224.3,
+                                184.72.240.3,
+                                184.72.229.1,
+                                184.72.245.1,
+                                184.72.48.22,
+                                3.16.81.254,
+                                3.87.182.149,
+                                34.219.234.134,
+                                8.18.145.134,
+                                8.18.144.9,
+                                8.18.145.139,
+                                8.18.145.150,
+                                8.18.145.157,
+                                8.18.145.36) 
+    AND All_Traffic.dest_port IN (*)
+  BY All_Traffic.dest_ip, All_Traffic.action
+| fields user, sourceIP, sourcePort, destinationIP, destinationPort, direction, action"
+ Search for password related subject,"The Splunk search query searches for events in the ""prod_mimecast"" index that contain the specific values in the fields ""subject"", ""Sender"", and ""Rcpt"". It then groups the results by the ""subject"" and ""Delivered"" fields and calculates the count of events, as well as the distinct values of ""Sender"" and ""Rcpt"" fields for each group.
+
+In other words, the query is searching for email messages with the subject ""Your message couldn't be delivered"" sent from ""test.test@testa.co.uk"" to ""test.test@testb.co.uk"". It then provides a summary of how many of these messages were delivered or not, and which email addresses were involved in these messages.",Always,24h,"index=prod_mimecast subject=""Your message couldn't be delivered"" Sender=""test.test@testa.co.uk"" Rcpt=""test.test@testb.co.uk"" 
+| stats count values(Sender) values(Rcpt) by subject Delivered"
+ Search for process doppelgÃ¤nging,"This Splunk search query is designed to search and analyze data from different indexes (prod_windows, prod_windows_ad, and prod_aws) for Windows EventCode 4985, which is related to a user's login attempt. It then filters out logon events with a specific Logon_ID value, and also filters out specific process names.
+
+Finally, it converts the time format to human-readable format and applies statistical analysis to the results, grouping them by time to show the values for different fields such as ComputerName, Process_Name, Logon_ID, action, user, Process_ID, name, category, Account_Domain, and Security_ID.
+
+In summary, this search query is intended to find login attempts from specific indexes, filter out logon events with a specific Logon_ID value, and then analyze the data by grouping them based on time and various fields. This can be helpful in identifying potential security threats or suspicious activities.",Always,24h,"(index=prod_windows OR index=prod_windows_ad OR index=prod_aws) EventCode=4985 Logon_ID!=0x3E7 
+Process_Name NOT IN (""c\\windows\\system32\\svchost.exe"", ""c\\windows\\servicing\\TrustedInstaller.exe"", 
+""c\\windows\\system32\\lsass.exe"", ""c\\windows\\winSxS\\*\\TiWorker.exe"", ""c\\windows\\system32\\poqexec.exe"") 
+| convert ctime(_time) as Time timeformat=""%d/%m/%y %H%M%S""
+| stats values(ComputerName) values(Process_Name) values(Logon_ID) values(action) values(user) 
+values(Process_ID) values(name) values(category) values(Account_Domain) values(Security_ID) by Time"
+ Search for rare service installation,"This Splunk search query does the following:
+
+It searches the indexes ""prod_windows"", ""prod_windows_ad"", and ""prod_aws"" for events with EventCode=7045.
+It calculates a count of the events for each unique value of Service_File_Name.
+It filters out any results where the count of events for a particular Service_File_Name is less than 5.
+It converts the _time field to a human-readable format, with the date and time displayed as DD/MM/YY HH:MM:SS.
+Finally, it groups the results by ComputerName and displays the values of several fields (EventCode, Sid, OpCode, Service_Name, Service_File_Name, Service_Start_Type, and Service_Type) for each unique combination of ComputerName and Service_File_Name.
+Overall, this query searches for Windows services that have been started or stopped on multiple computers, and identifies any services that have started or stopped fewer than 5 times on a given computer. It then groups the results by computer and service, providing details about each service, such as its name, type, and start type.",Always,24h,"index=prod_windows OR index=prod_windows_ad OR index=prod_aws EventCode=7045 
+| eventstats count as val by Service_File_Name 
+| search val < 5 
+| convert ctime(_time) as Time timeformat=""%d/%m/%y %H%M%S"" 
+| stats values(Time) values(EventCode) values(Sid) values(OpCode) values(Service_Name) values(Service_File_Name) values(Service_Start_Type) values(Service_Type) by ComputerName"
+ Search for service creation using external resources/utilities (psexec family),"This Splunk search query searches for events with EventCode=5145 in three different indexes (prod_windows, prod_windows_ad, and prod_aws). It then uses the transaction command to group events based on the Account_Name and ComputerName fields, where the event starts with an EventCode=5145 and Accesses includes ""WriteData"", and ends with an EventCode=5145 and the Relative_Target_Name includes ""\IPC$"" and ""svcctl"". The maxspan argument specifies a maximum time span of 1 minute for the transaction grouping.
+
+The search results are then converted using the convert command to display the _time field as a human-readable format, and the stats command is used to aggregate the results by ComputerName. The fields displayed in the output include Time, user, Source_Network_Address, EventCode, Share_Name, action, Accesses, Security_ID, and Relative_Target_Name.",Always,24h,"(index=prod_windows OR index=prod_windows_ad OR index=prod_aws) EventCode=5145 
+| transaction Account_Name ComputerName 
+  startswith=(EventCode=5145 (""*\ADMIN$"" OR ""*\C$"") Accesses=""*WriteData*"") 
+  endswith=(EventCode=5145 ""*\IPC$"" ""*svcctl*"") maxspan=1m 
+| convert ctime(_time) as Time timeformat=""%d/%m/%y %H%M%S"" 
+| stats values(Time) values(user) values(Source_Network_Address) values(EventCode) 
+  values(Share_Name) values(action) values(Accesses) values(Security_ID) 
+  values(Relative_Target_Name) by ComputerName"
+ Search for standard remote service creation (Windows Builtin),"This Splunk search query searches through three different indexes (prod_windows, prod_windows_ad, prod_aws) for events with specific event codes: 5156, 7045, and 4697.
+
+It then groups the events by the ""Service_Name"" and the time the events occurred, using the transaction command to group all events related to a particular service together. The maxspan argument sets the maximum duration of a transaction to 1 minute.
+
+The convert command changes the timestamp format to a more readable format, and the stats command returns a table with aggregated values of the specified fields (EventCode, ComputerName, TaskCategory, Service_File_Name, Service_Start_Type, Service_Type) grouped by Service_Name and Time.
+
+Overall, this query can be used for monitoring and troubleshooting of service-related issues in Windows and AWS environments.",Always,24h,"(index=prod_windows OR index=prod_windows_ad OR index=prod_aws) 
+(EventCode=5156 ""*services.exe"" OR EventCode=7045 OR EventCode=4697) 
+| transaction ComputerName startswith=(EventCode=5156) endswith=(EventCode=7045 OR EventCode=4697) maxspan=1m 
+| convert ctime(_time) as Time timeformat=""%d/%m/%y %H%M%S"" 
+| stats values(EventCode) values(ComputerName) values(TaskCategory) values(Service_File_Name) values(Service_Start_Type) values(Service_Type) by Service_Name Time"
+ Search for suspicious Domains (30 Days),"This Splunk search query is looking for data related to web activity that matches the specified criteria.
+
+The first line of the query uses the tstats command to perform statistical analysis on data in the ""Web"" datamodel. It selects the minimum time stamp (as ""Time""), the unique values of the ""Web.user"" field (as ""user""), the unique values of the ""Web.dest"" field (as ""dest""), the unique values of the ""Web.http_method"" field (as ""method""), the unique values of the ""Web.url"" field (as ""url""), the unique values of the ""Web.http_referrer"" field (as ""referrer""), the unique values of the ""Web.http_user_agent"" field (as ""userAgent""), the unique values of the ""Web.category"" field (as ""category""), and the unique values of the ""Web.action"" field (as ""action"").
+
+The second line specifies the criteria that the data must meet. The ""where"" clause filters the data to only include events where the ""Web.dest"" field matches any value (using the wildcard character """") and the ""Web.url"" field matches one of the specified values. Additionally, the ""Web.http_referrer"" field must match any value (using the wildcard character """").
+
+The third line uses the ""fields"" command to select only the specified fields for display.
+
+The final line uses the ""convert"" command to convert the ""Time"" field to a human-readable timestamp format.",Always,24h,"| tstats min(_time) as Time values(Web.user) as user, values(Web.dest) as dest, 
+  values(Web.http_method) as method, values(Web.url) as url, values(Web.http_referrer) as referrer, 
+  values(Web.http_user_agent) as userAgent, values(Web.category) as category, values(Web.action) as 
+  action from datamodel=Web 
+  where Web.dest in (*) and Web.url IN (""*sctask.smartconnexxionz.com*"",
+  ""*medicalconsultants.ie*"",
+  ""*mmogollon.com.mx*"",
+  ""*laboratoriostabbler.com*"",
+  ""*urban-mosaic.com*"",
+  ""*kezto.co.uk*"",
+  ""*atwebpages.com*"",
+  ""*maapaaevents.com*"",
+  ""*truxiellogroup.com*"",
+  ""*wexfashion.com*"",
+  ""*caledoniehousesitting.com*"",
+  ""*tcet-talk.info*"",
+  ""*opinionglobal.com.do*"",
+  ""*payments.amadike.com*"",
+  ""*nec-i.com*"",
+  ""*du-wizards.com*"",
+  ""*ppdb-legacy.man1lamongan.com*"",
+  ""*motobuin.eltipodelasfotos.cl*"",
+  ""*riveroakshyundaikia.com*"",
+  ""*crudtest.srintegrated.com*"",
+  ""*busandvanrentalmalaysia.com*"",
+  ""*allstagingwork.com*"",
+  ""*tootaldeals.com*"",
+  ""*indabol.com.bo*"",
+  ""*olebaby.in*"",
+  ""*tootaldeals.com*"",
+  ""*binhanbal.com*"",
+  ""*bookallon.com*"",
+  ""*artismc.in*"",
+  ""*t-o-u-c-h-s-m-a-r-t.com*"",
+  ""*osmosisecuador.com*"",
+  ""*bulksms.interweblimited.com*"",
+  ""*sistacweb.com*"") 
+  and Web.http_referrer in (*) 
+  by Web.url 
+| fields Time, user, dest, url, method, referrer, userAgent, category, action 
+| convert ctime(Time)"
+ Search for suspicious Files (30 Days),"This Splunk search query searches for events that match certain criteria within the specified indexes. Specifically, it searches for events that are within the indexes prod_checkpoint, prod_cisco*, prod_o365, prod_windows, and prod_sophos*, and that contain one of the specified file names (INV0737559499-20210111480893.xlsm, INV1906204175-20210111877440.xlsm, INV1998174535-20210111804169.xlsm, INV4808261243-20210111191030.xlsm, INV8164713354-20210111643874.xlsm, INV9617285161-20210111842813.xlsm, INV1788514716-20210111553807.xlsm).
+
+In summary, the query is looking for specific files within specific indexes.",Always,24h,"index IN (prod_checkpoint, prod_cisco*, prod_o365, prod_windows, prod_sophos*) 
+AND (""INV0737559499-20210111480893.xlsm"" OR ""INV1906204175-20210111877440.xlsm"" OR 
+""INV1998174535-20210111804169.xlsm"" OR ""INV4808261243-20210111191030.xlsm"" OR 
+""INV8164713354-20210111643874.xlsm"" OR ""INV9617285161-20210111842813.xlsm"" OR 
+""INV1788514716-20210111553807.xlsm"")"
+ Search for suspicious Hashes (30 Days),"The Splunk search query you provided searches across multiple indexes (prod_checkpoint, prod_cisco*, prod_o365, prod_windows, and prod_sophos*) for events that contain either ""fa5350d4304c4c2ceafa435244b5a5fc"" or ""9b7c2b0abf5478ef9a23d9a9e87c7835"".
+
+The OR operator between the index names specifies that the search should return results from any of these indexes, while the asterisk (*) is a wildcard character used to match any index that starts with ""prod_cisco"" or ""prod_sophos"".
+
+The parentheses group the two search terms together, indicating that the search should return events that contain either of these two terms.
+
+Overall, this search query looks for events across multiple indexes that contain either of the two specified strings, which may be relevant in a security investigation or troubleshooting scenario.",Always,24h,"index=prod_checkpoint OR index=prod_cisco* OR index=prod_o365 OR index=prod_windows OR index=prod_sophos* 
+(""fa5350d4304c4c2ceafa435244b5a5fc"" OR ""9b7c2b0abf5478ef9a23d9a9e87c7835"")"
+ Search for URLs,"This Splunk search query looks for events in three different indexes - prod_checkpoint, prod_cisco_asa, and prod_censornet. The query then searches for any events that contain one of the specified strings within their data.
+
+The strings being searched for are ""bighecks.net"", ""imageshells.com"", ""sonic4us.ru"", ""www.yahgodz.com"", and ""www.update.microsoft.com.nsatc.net"". The asterisks (*) act as wildcards, meaning that any characters can appear before or after the specified string.
+
+Overall, this search query is used to look for events within the specified indexes that contain any of the specified strings, which may be helpful for identifying potentially suspicious or malicious activity related to these domains.",Always,24h,"index=prod_checkpoint OR index=prod_cisco_asa OR index=prod_censornet 
+(""*bighecks.net*"" OR ""*imageshells.com*"" OR ""*sonic4us.ru*"" OR ""*www.yahgodz.com*"" OR ""*www.update.microsoft.com.nsatc.net*"")"
+ Search to Detect Authentication Bypass (90d),"The Splunk search query you provided performs a search on data indexed in the ""test_windows_iis"" index that has a sourcetype of ""msiisauto"" and matches the following criteria:
+
+http_method is ""POST""
+uri_path starts with ""/owa/auth/Current/themes/resources/""
+The search then uses the ""stats"" command to aggregate the results and produces a table with the count of occurrences grouped by the following fields:
+
+src_ip: the IP address of the client that sent the request
+http_user_agent: the user agent string of the client's web browser
+uri_path: the path component of the requested URI
+http_method: the HTTP method used in the request (in this case, ""POST"")
+uri_query: the query string component of the requested URI (this field is not explicitly used in the query, but it will be included in the results if it is present in the data).",Always,24h,"index=test_windows_iis sourcetype=""msiisauto"" http_method=POST uri_path=""/owa/auth/Current/themes/resources/*""
+| stats count by src_ip, http_user_agent, uri_path, http_method, uri_query"
+ Search to detect Exchange Unified Messaging Service Creating Child Process (90d),"The Splunk search query searches for events in three different indexes: ""prod_windows"", ""prod_windows_ad"", and ""test_windows_iis"". The events should have a ParentProcessName field that contains either ""umworkerprocess.exe"" or ""UMService.exe"", but the NewProcessName field should not contain ""UMWorkerProcess.exe"".
+
+More specifically, the query is looking for events where the ParentProcessName field contains either ""umworkerprocess.exe"" or ""UMService.exe"" and the NewProcessName field does not contain ""UMWorkerProcess.exe"". The OR operator between the index values means that events from any of the three indexes will be returned if they meet the search criteria. The asterisks in the search terms indicate that the search is looking for any string that includes ""umworkerprocess.exe"", ""UMService.exe"", or ""UMWorkerProcess.exe"". The NOT operator before ""NewProcessName"" means that events that have ""UMWorkerProcess.exe"" in the NewProcessName field will be excluded from the search results.",Always,24h,"index=prod_windows OR index=prod_windows_ad OR index=test_windows_iis 
+(ParentProcessName=""*umworkerprocess.exe*"" OR ParentProcessName=""*UMService.exe*"") NOT 
+NewProcessName=""*UMWorkerProcess.exe*"""
+ Search to Detect Powercat (90d),"This Splunk search query searches for events in the ""WinEventLog"" sourcetype with an EventCode of 4104 and containing the string ""powercat"" in any of the fields from the specified indexes: ""prod_windows"", ""prod_windows_ad"", and ""test_windows_iis"".
+
+In other words, the query looks for Windows event logs related to the powercat utility, which is a PowerShell-based tool used for penetration testing and network reconnaissance.
+
+The query filters the results to only include events from the specified indexes, which are likely related to Windows servers or workstations in a production or testing environment.",Always,24h,"index IN (prod_windows, prod_windows_ad, test_windows_iis) sourcetype=""WinEventLog"" EventCode=4104 
+""*powercat*"""
+ Search to Detect WebShells (90d),"This Splunk search query searches the ""test_windows_iis"" index for events that have a sourcetype of ""msiisauto"" and an HTTP method of POST, with a status code less than or equal to 403. It then filters these events based on whether the URI query contains one of the following file extensions: .php, .jsp, .cfm, .asp, or .aspx.
+
+After filtering the events, it uses the stats command to aggregate the results by the source IP, HTTP user agent, URI path, HTTP method, and URI query. The count of events for each unique combination of these fields is then displayed in the output.
+
+Overall, this search query is designed to identify potentially suspicious HTTP requests made to a web server, particularly those that involve specific file extensions that are commonly used for dynamic web pages.",Always,24h,"index=test_windows_iis sourcetype=""msiisauto"" http_method=POST status<=403 (uri_query=*.php OR uri_query=*.jsp OR uri_query=*.cfm OR uri_query=*.asp OR uri_query=*.aspx)
+| stats count by src_ip, http_user_agent, uri_path, http_method, uri_query"
+ Search to identify any file hash hits (30 days),"The Splunk search query is searching for events in any index that contain one of the specified values within parentheses. The specified values are likely to be some form of unique identifiers, such as a hash value, which can be used to identify specific events or transactions. The query is searching for events that match any of the specified values, using the logical OR operator between each value.",Always,24h,"index=* (207793677b889bf22c8f28120df0ab1cca69e23eb5213bfda5b474a0472f3fff OR
+          2263c1eb4d302492f261a35f02ac9257baaa1a1d8f0c0025459aef18dfde14e9 OR
+          34d6f25484edc517676af1b474d0dcc9fdf8277585206f3dfe1b9dc41a8e1d30 OR
+          52818de60a1238d208ec65ca00ae14d152ce2707104b02b9bb662533c33f9b80 OR
+          5d7810ab55189a068ae5ceef92f5d95ea105716f7abb7fdaa8db368bcc997c04 OR
+          8f5c02d7501229d5a06f864a936a76552fa03688860533ac46de9b1a881599db OR
+          9fdd46b8fac611813d0610ddc9a74be2534552f84037a021f2111f8cfcd02669 OR
+          c702947e68cebfde3eafa8b78711ba0c536e44912d7b4984a9055aa22d7ccedf OR
+          ca72d0ae5eb6e9e50fad7cea56c5048dc738024ed13750da83040fe0a5984101 OR
+          cb01f4749caef72ea8aaf8c166aa5b572f8bd5295779500cb0e5e8f1a2c38dc9 OR
+          cd669d8bc591e23169c703f49a20d7446a8a6db51c959334e9a5a6650882703e OR
+          d8b62bc60696d110df3d97c4ebcb5d2bd0a0c0445ce4a86a5a86c7e494f4c8d0 OR
+          e0d5bc01f2e3465b7dce3eb791b7e455a7bbd2c109a604312384d99e93f9b6b4 OR
+          ef804ddc84810a362e4c70f3bc1eb1650254acaabe33ffe9e1ed65a6ddd82067 OR
+          f023618b0b87c2b9c5115bfd3342c694564219757c1b5125c042f5a0f17ae682 OR
+          f8c1f6de0ec2d17ad26aae9fa2c5a33a9105cda60251cc388bd4c2c624d738e4)"
+ Search to Identify Domains/Hostnames/URLs,"This Splunk search query is used to retrieve summarized information about the Web data model in Splunk for a set of specific URLs.
+
+The search query uses the tstats command to summarize the count of events, as well as the minimum and maximum timestamps of the events in the specified time range, for the Web data model. The summariesonly=t option specifies that only the summarized results are returned.
+
+The where command filters the results by the Web.url field, selecting only the events with URLs that match the specified patterns. The IN operator is used to match any of the specified URL patterns.
+
+Finally, the by command groups the summarized results by the Web.src and Web.url fields, which means that the results will be grouped by the source IP address and the URL.",Always,24h,"| tstats summariesonly=t count min(_time) as firstTime max(_time) as lastTime from datamodel=Web 
+where Web.url IN (
+  ""*13hjkz7513v64541852v65431b5411dxv24.su*"",
+  ""*13uhbt1z3tz78a56sdvghf1563451.ru*"",
+  ""*1376bad654134c667213.online*"",
+  ""*1378137613gbadz13567ds13.su*"",
+  ""*137zt67g1635r5bd671563gbzasduzh512.online*"",
+  ""*713zgjj2iigbh1766av441bsd67613.ru*"",
+  ""*7163zbh16356ztug13765gv541.su*"",
+  ""*asdjihnu1z763hubad6tn13.su*"",
+  ""*hjadzgt613bhu8967rv61563fv.su*"",
+  ""*ngnanoservebkup.duckdns.org*"",
+  ""*yandex.ru*"",
+  ""*hdfc.pp.ru*"",
+  ""*www5.tamareirashotelmg.com.br*"",
+  ""*www5.cdljussarago.com.br*"",
+  ""*guardiasolutionsnet*"",
+  ""*specializedhelp.com*"",
+  ""*dolamosssepo.com*"",
+  ""*dolamosssepo.xyz*"",
+  ""*rossmailers.club*"",
+  ""*rossmailers.com*"",
+  ""*rossmailers.me*"",
+  ""*rossmailers.net*"",
+  ""*rossmailers.org*"",
+  ""*rossmailers.pw*"",
+  ""*rossmailers.space*""
+) by Web.src, Web.url"
+ Search to Identify Domains/Hostnames/URLs (30 days),"This Splunk search query will search for events across all indexes that contain any one of the four specified hexadecimal strings:
+
+80674fb8973e2a7ee31596d9105d1d897a92f7bbcbf6f07b3bf7a9444f71ca9c
+93374f99070affdf3c298c152fc33694
+0793ce8600d84be1e9330ce243da55756a6e24e5
+bf8d0fc2065cdf22ebaba1265ecbe4c4b44c0108
+These hexadecimal strings are likely to be some sort of identifiers, such as a session ID, a transaction ID, or a cryptographic hash. The purpose of the search is not specified in the query, but it could be used, for example, to search for all events related to a particular session or transaction.",Always,24h,"index=*
+(80674fb8973e2a7ee31596d9105d1d897a92f7bbcbf6f07b3bf7a9444f71ca9c 
+OR 93374f99070affdf3c298c152fc33694 
+OR 0793ce8600d84be1e9330ce243da55756a6e24e5 
+OR bf8d0fc2065cdf22ebaba1265ecbe4c4b44c0108)"
+ Search to identify Exchange Unified Messaging Service Creating Executable Content (90d),"The Splunk search query is used to search for events in the specified indexes and sourcetypes that meet certain criteria.
+
+The query filters events based on the following criteria:
+
+index=prod_windows OR index=prod_windows_ad OR index=test_windows_iis: This specifies that events should be searched in three different indexes, namely prod_windows, prod_windows_ad, and test_windows_iis.
+
+sourcetype=""WinEventLog"": This specifies that events should be of the sourcetype WinEventLog.
+
+EventCode=4663: This specifies that events should have an EventCode value of 4663.
+
+ObjectType=""File"": This specifies that events should have an ObjectType value of File.
+
+ObjectName=""*.php"" OR ObjectName=""*.jsp"" OR ObjectName=""*.js"" OR ObjectName=""*.aspx"" OR ObjectName=""*.asmx"" OR ObjectName=""*.cfm"" OR ObjectName=""*.shtml"": This specifies that events should have an ObjectName value that ends with one of the listed file extensions.
+
+ProcessName=""*umworkerprocess.exe*"" OR ProcessName=""*UMService.exe*"": This specifies that events should have a ProcessName value that contains either umworkerprocess.exe or UMService.exe.
+
+In summary, this search query looks for events in specific indexes and sourcetypes that pertain to file-related activities involving certain file extensions and specific process names.",Always,24h,"index=prod_windows OR index=prod_windows_ad OR index=test_windows_iis sourcetype=""WinEventLog"" EventCode=4663 
+ObjectType=""File"" ObjectName=""*.php"" OR ObjectName=""*.jsp"" OR ObjectName=""*.js"" OR ObjectName=""*.aspx"" OR 
+ObjectName=""*.asmx"" OR ObjectName=""*.cfm"" OR ObjectName=""*.shtml"" 
+ProcessName=""*umworkerprocess.exe*"" OR ProcessName=""*UMService.exe*"""
+ Search to Identify Execution of 7z (90d),"The Splunk search query you provided searches for events from two different indexes (prod_windows and prod_windows_ad, as well as test_windows_iis) that have a sourcetype of WinEventLog. Additionally, the query filters for events with an EventCode of 4688 and a process that starts with C:\ProgramData\7z*.
+
+In other words, this query is looking for Windows Event Log events that have been generated by a specific process (in this case, any process that starts with C:\ProgramData\7z*) on machines that are part of the specified indexes. The EventCode=4688 part of the query specifically filters for events that relate to process creation or ""New Process Created"" events.
+
+This search query could be used for a variety of purposes, such as monitoring and alerting on specific processes that are executed on Windows machines, or tracking down specific security events that relate to process creation.",Always,24h,"index=prod_windows OR index=prod_windows_ad OR index=test_windows_iis sourcetype=""WinEventLog"" EventCode=4688 process=""C\\ProgramData\\7z*"""
+ Search to identify Hashes (30 days),"This Splunk search query is searching for events in all indexes where the field value of ""index"" is equal to any of the specified values in the parentheses.
+
+The values inside the parentheses are likely to be unique identifiers for specific events, such as hash values for files or IDs for network connections, and the query is searching for any events that contain these values.
+
+The ""OR"" operator between each value means that the query will match events that contain any of the specified values, not just events that contain all of them.
+
+Overall, the query is looking for any events that match one of the specified unique identifiers across all indexes in Splunk.",Always,24h,"index=* (80674fb8973e2a7ee31596d9105d1d897a92f7bbcbf6f07b3bf7a9444f71ca9c 
+OR 93374f99070affdf3c298c152fc33694 
+OR 0793ce8600d84be1e9330ce243da55756a6e24e5 
+OR bf8d0fc2065cdf22ebaba1265ecbe4c4b44c0108)"
+ Search to identify IP addresses across all indexes,"This Splunk search query searches across all indexes (indicated by the ""*"" wildcard) for events that contain any of the specified IP addresses. Specifically, the query looks for events where the IP address matches one of the following: ""40.70.224.146"", ""91.92.109.119"", ""52.185.71.28"", ""212.7.208.130"", ""172.217.9.238"", ""40.76.4.15"", ""184.168.131.241"", ""5.255.255.80"", or ""85.143.215.139"".
+
+This type of query is commonly used in security analysis to search for events associated with known malicious IP addresses or to identify potential indicators of compromise. By searching across all indexes, the query can help identify events that may have been missed by more targeted searches.",Always,24h,"index=* ( ""40.70.224.146"" OR ""91.92.109.119"" OR ""52.185.71.28"" OR ""212.7.208.130"" OR ""172.217.9.238"" OR ""40.76.4.15"" OR ""184.168.131.241"" OR ""5.255.255.80"" OR ""85.143.215.139"" )"
+ Search to Identify IP traffic (30 days),"This Splunk search query is used to search for events in two different indexes - prod_cisco_asa and prod_checkpoint - that have one of the listed IP addresses. The query is composed of two main parts:
+
+The first part is a logical OR operator (OR) used to search for events in either of the two indexes. The index keyword is used to specify the name of the index.
+
+The second part is a list of IP addresses enclosed in parentheses and connected with logical OR operators. The ip keyword is used to specify the IP address field to search for.
+
+So in summary, this query will search for events that match any of the specified IP addresses in either the prod_cisco_asa or prod_checkpoint indexes.",Always,24h,"(index=prod_cisco_asa OR index=prod_checkpoint) (ip=""209.68.32.176"" OR ip=""114.140.13.110"" OR ip=""64.184.203.87"" OR ip=""66.74.65.21"" OR ip=""75.69.92.137"" OR ip=""173.161.53.61"" OR ip=""67.82.249.90"" OR ip=""71.87.111.92"" OR ip=""75.64.22.81"" OR ip=""181.47.5.125"" OR ip=""95.111.225.124"" OR ip=""181.165.92.121"" OR ip=""118.168.183.114"" OR ip=""125.58.66.125"" OR ip=""61.227.47.110"" OR ip=""24.166.59.97"" OR ip=""71.97.99.170"" OR ip=""1.160.225.1"" OR ip=""68.230.236.85"" OR ip=""97.104.42.173"" OR ip=""111.248.215.43"" OR ip=""178.158.65.14"" OR ip=""114.162.146.65"" OR ip=""190.181.207.76"" OR ip=""24.181.13.254"")"
+ Search to Identify IPS (30 days),"This Splunk search query uses the tstats command to summarize and count the network traffic data based on the specified datamodel=Network_Traffic.
+
+The query looks for the network traffic data where the destination IP address is either ""5.196.108.185"", ""200.116.145.225"", or ""96.126.101.6"".
+
+It groups the data by the source IP address and destination IP address using the ""by"" clause.
+
+The tstats command with the ""summariesonly=t"" option indicates that it only returns summary results, not individual events.
+
+The query also uses the ""min"" and ""max"" functions to find the earliest and latest timestamps of the events in the result.
+
+In summary, this query produces a summarized count of network traffic data between the specified source and destination IP addresses, along with the earliest and latest timestamps of those events.",Always,24h,"| tstats summariesonly=t count min(_time) as firstTime max(_time) as lastTime from datamodel=Network_Traffic where All_Traffic.dest_ip IN (""5.196.108.185"", ""200.116.145.225"", ""96.126.101.6"") by All_Traffic.src_ip, All_Traffic.dest_ip"
+ Search to identify malicious domains,"This Splunk search query retrieves summarized data related to web traffic from the datamodel=Web for a specific set of URLs (""dw.adyboh.com"",""wy.adyboh.com"",""feb.kkooppt.com"",""compdate.my03.com"",""jocoly.esvnpe.com"",""bmy.hqoohoa.com"",""bur.vueleslie.com"",""wind.windmilldrops.com"") and groups the data by the source IP address (Web.src).
+
+The query uses the tstats command to summarize the data and retrieve specific fields such as earliest and latest timestamps, user, destination, site, action, category, http_content_type, http_method, http_referrer, and user agent.
+
+The drop_dm_object_name command is then used to remove the ""Web"" prefix from the field names.
+
+The convert command is used to convert the timestamps to a more human-readable format using the ctime function and specifying the timeformat as ""%d/%m/%Y %H%M%S"".
+
+Finally, the data is sorted in descending order by the earliest timestamp using the sort command and the -Earliest field.",Always,24h,"| tstats summariesonly=t earliest(_time) as Earliest latest(_time) as Latest values(Web.user) as User values(Web.dest) as Destination values(Web.site) as Site values(Web.action) as Action values(Web.category) as Category values(Web.http_content_type) as ""HTTP Content Type"" values(Web.http_method) as ""HTTP Method"" values(Web.http_referrer) as ""HTTP Referrer"" values(Web.http_user_agent) as ""User Agent"" from datamodel=Web WHERE Web.url IN (""dw.adyboh.com"",""wy.adyboh.com"",""feb.kkooppt.com"",""compdate.my03.com"",""jocoly.esvnpe.com"",""bmy.hqoohoa.com"",""bur.vueleslie.com"",""wind.windmilldrops.com"") by Web.src 
+| `drop_dm_object_name(Web)` 
+| convert ctime(Earliest) ctime(Latest) timeformat=""%d/%m/%Y %H%M%S"" 
+| sort -Earliest"
+ Search to identify malicious IPS,"This Splunk search query performs the following actions:
+
+tstats command is used to summarize the data from the ""Web"" datamodel for the specified fields - earliest(_time), latest(_time), values(Web.user), values(Web.dest), values(Web.site), values(Web.action), values(Web.category), values(Web.url), values(Web.http_content_type), values(Web.http_method), values(Web.http_referrer), and values(Web.http_user_agent).
+The ""WHERE"" clause filters the results based on the ""Web.dest"" field to include only the specified IP addresses (""95.179.242.6"", ""95.179.242.27"", ""199.247.25.102"", ""95.179.210.61"", ""95.179.156.97"").
+The ""by"" clause groups the results by the ""Web.src"" field.
+The drop_dm_object_name(Web) macro is used to remove the ""Web"" prefix from the field names in the output.
+The convert command is used to convert the earliest and latest timestamps into a human-readable format using the ctime function and a specified time format (""%d/%m/%Y %H%M%S"").
+The sort command is used to sort the results in descending order based on the ""Earliest"" field.
+Overall, this Splunk search query summarizes and filters data from the ""Web"" datamodel and presents the results grouped by the source IP address. It also formats the timestamps and sorts the results in descending order based on the earliest timestamp.",Always,24h,"| tstats summariesonly=t earliest(_time) as Earliest latest(_time) as Latest values(Web.user) as User values(Web.dest) as Destination values(Web.site) as Site values(Web.action) as Action values(Web.category) as Category values(Web.url) as URL values(Web.http_content_type) as ""HTTP Content Type"" values(Web.http_method) as ""HTTP Method"" values(Web.http_referrer) as ""HTTP Referrer"" values(Web.http_user_agent) as ""User Agent"" from datamodel=Web WHERE Web.dest IN (""95.179.242.6"", ""95.179.242.27"", ""199.247.25.102"", ""95.179.210.61"", ""95.179.156.97"") by Web.src
+| `drop_dm_object_name(Web)` 
+| convert ctime(Earliest), ctime(Latest) timeformat=""%d/%m/%Y %H%M%S""
+| sort -Earliest"
+ Search to Identify Nishang Framework Utilising EventCode 4688 (90d),"The Splunk search query you provided will search for Windows Event logs related to Event Code 4104, that contain the string ""powercat"" in their events. Specifically, it will search for these logs in two indexes: ""prod_windows"" and ""prod_windows_ad"", as well as in an index called ""test_windows_iis"", and the sourcetype of the logs should be ""WinEventLog"".
+
+To break down the query further:
+
+""index=prod_windows OR index=prod_windows_ad OR index=test_windows_iis"": This section of the query specifies which indexes to search. It will search in three indexes: ""prod_windows"", ""prod_windows_ad"", and ""test_windows_iis"".
+""sourcetype=""WinEventLog"""": This specifies the sourcetype of the logs to search, which in this case is ""WinEventLog"".
+""EventCode=4104"": This specifies the specific Event Code to search for, which is 4104.
+""powercat"": This is the search term for the events. It will search for events that contain the string ""powercat"", with any number of characters before or after it, indicated by the asterisks (*).",Always,24h,"index=prod_windows OR index=prod_windows_ad OR index=test_windows_iis sourcetype=""WinEventLog"" EventCode=4104 ""*powercat*"""
+ Search to identify web shell URIs via anomalous IP address access,"This Splunk search query does the following:
+
+index=*: Searches all indexes.
+fillnull value=-: Replaces null values with - in all fields.
+search status>=""200"" status<=""300"" uri!="""" clientip!="""": Filters events that have a status code between 200 and 300, a non-empty URI, and a non-empty client IP.
+stats dc(useragent) as dc_user_agent values(useragent) as values_user_agent dc(clientip) as dc_src values(clientip) as values_src count by uri: Groups the events by URI and calculates the number of unique user agents (dc_user_agent), the distinct values of user agents (values_user_agent), the number of unique client IPs (dc_src), the distinct values of client IPs (values_src), and the count of events for each URI.
+search dc_src<=5 OR dc_user_agent<=5: Filters the events to show only those where the number of unique client IPs (dc_src) or the number of unique user agents (dc_user_agent) is less than or equal to 5.
+table uri dc_user_agent values_user_agent dc_src values_src: Displays the results in a tabular format, showing the URI, the number of unique user agents, the distinct values of user agents, the number of unique client IPs, and the distinct values of client IPs.",Always,24h,"index=*
+| fillnull value=- 
+| search status>=""200"" status<=""300"" uri!="""" clientip!=""""
+| stats dc(useragent) as dc_user_agent values(useragent) as values_user_agent dc(clientip) as dc_src values(clientip) as values_src count by uri 
+| search dc_src<=5 OR dc_user_agent<=5 
+| table uri dc_user_agent values_user_agent dc_src values_src"
+ Search to view connections to/fromseen IPS.,"This Splunk search query is searching the ""prod_cisco_asa"" index for events where the source IP address (src) matches a specific range of IP addresses (150.129.8.4, 150.129.8.5, 150.129.8.6, 150.129.8.8 through 150.129.8.17, 150.129.8.19, 150.129.8.23 through 150.129.8.28, and 150.129.8.30 through 150.129.8.34).
+
+The search then uses the ""stats"" command to aggregate the results and return the earliest and latest timestamps for each unique combination of source and destination IP addresses (src and dest). Additionally, it returns the values of other fields such as ""Device"", ""Src_port"", ""Dest_port"", ""Transport"", ""Description"", ""Bytes"", ""Action"", and ""Severity"" associated with the events in the search.
+
+Finally, the ""convert"" command is used to convert the earliest and latest timestamps from Unix time format to human-readable time format (using the ""ctime"" function).",Always,24h,"index=prod_cisco_asa src=150.129.8.{4,5,6,8-17,19,23-28,30-34} 
+| stats earliest(_time) as Earliest latest(_time) as Latest values(dvc) as Device 
+values(src_port) as Src_port values(dest_port) as Dest_port values(transport) as Transport 
+values(description) as Description values(bytes) as Bytes values(Cisco_ASA_action) as Action 
+values(severity_level) as Severity by src dest 
+| convert ctime(Earliest) ctime(Latest)"
+ Search to view hashe,"This Splunk search query searches across all indexes for events that contain any of the listed strings within parentheses. The strings appear to be arbitrary alphanumeric sequences and could potentially be related to identifying specific events or data sets. Without additional context, it is difficult to determine the purpose or meaning of the query.",Always,24h,"index=*
+  (abfa2a78b07ab43f637f2f6fd35e2e40983bb1033ba2beac9602745d5a54d257 OR
+   5924160dbc013d83a07ef1a9df8503de9bc1e577 OR
+   156685d32876f14d8e52bc6070004100 OR
+   8dbef5f7ffa96759bd395938ed385c8cfe991f96402f900f0a571c844c7fb78d OR
+   f9914b360284b987ab21f56aea9f6153fac23b84 OR
+   25a50b573de8f82bf8d5b29386fb94d7 OR
+   ac41e98905b8d5ca7ab3a06b3aa32fdabcbd31344f8b846d5062d3c3f9cf2942 OR
+   f43349174986cc31754b6c48627dd67af05352ab OR
+   5b8f8c6d171cb1b2e10d4264f5c3d9e6 OR
+   9b7ce9e9799f2c0c6357179d6ebd8c70380b783daf120302c3c21b41a9a6d5c5 OR
+   f07ddc53210435ca7fc1ef77577b058addcd63ce OR
+   131ab3e4ec47ff73ad99d9b3ab9bc00b OR
+   7190e8b5494bdbded7b48026eb7a0a51e103f7ef937f98c9cf91c344579e95f9 OR
+   57e9c9f4b40ccd0a26dba3cdea0dd91f118fc1c9 OR
+   7d758edc08b4fa1fd16a1c251306187c OR
+   acce6fbf738203f7a7a33b2ffb0d1fc48f718792d783dac0aec2112ab0f1a13e OR
+   0acbf782d01cf6ab3a797fd929e60da4b34e6876 OR
+   4ca19cafb8b2f762637ffd255070b84e)"
+ Search to view processes,"This Splunk search query will search for events or logs that match the following criteria:
+
+The events/logs should belong to either the ""prod_servicenow"" or ""prod_windows"" index.
+The events/logs should contain any of the following strings: ""999.exe"", ""888.exe"", ""777.exe"", or ""netscan6405.exe"".
+The ""OR"" operator is used to specify multiple indexes and the ""OR"" operator is used to specify multiple strings that should be searched for within the events/logs.
+
+Overall, this search query is useful for identifying events or logs related to specific executables across multiple indexes in Splunk.",Always,24h,index=prod_servicenow OR index=prod_windows (999.exe OR 888.exe OR 777.exe OR netscan6405.exe)
+ While investigating threat hunt some further activity was identified.,"The Splunk search query you provided is searching for data in all indexes that contains any of the following file paths or file names:
+
+%APPDATA%\pid.txt
+%APPDATA%\pidloc.txt
+%TEMP%\holdermail.txt
+%TEMP%\holderwb.txt
+\Sys.exe
+\autorun.inf
+E\autorun.inf
+%TEMP%\SysInfo.txt
+%APPDATA%\Wind
+The index=* part of the query specifies that data should be searched in all available indexes.
+
+So, this search query is likely being used to look for any events or data related to files with these names or paths, which may indicate potential security threats or malicious activity on the system.",Always,24h,"index=* (""%APPDATA%\pid.txt"" OR ""%APPDATA%\pidloc.txt"" OR ""%TEMP%\holdermail.txt"" OR 
+""%TEMP%\holderwb.txt"" OR ""\Sys.exe"" OR ""\autorun.inf"" OR ""E\autorun.inf"" OR ""%TEMP%\SysInfo.txt"" OR 
+""%APPDATA%\Wind"
+Check For Connections to Domains (30d),"This Splunk search query is used to retrieve information about web traffic that has a specific set of destination URLs and referrer URLs.
+
+Specifically, it uses the tstats command to aggregate statistics on fields related to web traffic from the Web datamodel. The WHERE clause filters the results to include only web traffic with destination URLs and referrer URLs that match the provided set of values.
+
+Finally, the fields command is used to extract and display only the specific fields of interest: user, dest, url, method, referrer, userAgent, category, and action. The results are grouped by Web.url.",Always,24h,"| tstats values(Web.user) AS user, values(Web.dest) AS dest, values(Web.http_method) AS method, 
+  values(Web.url) AS url, values(Web.http_referrer) AS referrer, values(Web.http_user_agent) AS 
+  userAgent, values(Web.category) AS category, values(Web.action) AS action FROM datamodel=Web 
+  WHERE Web.dest IN (""*f0525443.xsph.ru*"", ""*f0525538.xsph.ru*"", ""*f0526889.xsph.ru*"", 
+  ""*f0528108.xsph.ru*"", ""*f0528018.xsph.ru*"", ""*f0528103.xsph.ru*"", ""*f0527632.xsph.ru*"", 
+  ""*f0527590.xsph.ru*"", ""*f0527586.xsph.ru*"", ""*f0527577.xsph.ru*"", ""*f0527472.xsph.ru*"", 
+  ""*f0527475.xsph.ru*"", ""*f0527235.xsph.ru*"", ""*f0526632.xsph.ru*"", ""*f0526333.xsph.ru*"", 
+  ""*f0525244.xsph.ru*"", ""*f0525767.xsph.ru*"", ""*f0525168.xsph.ru*"", ""*f0525255.xsph.ru*"", 
+  ""*f0525053.xsph.ru*"") AND Web.url IN (""*f0525443.xsph.ru*"", ""*f0525538.xsph.ru*"", 
+  ""*f0526889.xsph.ru*"", ""*f0528108.xsph.ru*"", ""*f0528018.xsph.ru*"", ""*f0528103.xsph.ru*"", 
+  ""*f0527632.xsph.ru*"", ""*f0527590.xsph.ru*"", ""*f0527586.xsph.ru*"", ""*f0527577.xsph.ru*"", 
+  ""*f0527472.xsph.ru*"", ""*f0527475.xsph.ru*"", ""*f0527235.xsph.ru*"", ""*f0526632.xsph.ru*"", 
+  ""*f0526333.xsph.ru*"", ""*f0525244.xsph.ru*"", ""*f0525767.xsph.ru*"", ""*f0525168.xsph.ru*"", 
+  ""*f0525255.xsph.ru*"", ""*f0525053.xsph.ru*"") AND Web.http_referrer IN (*) BY Web.url
+| fields user, dest, url, method, referrer, userAgent, category, action"
+Check for evidence of mimikatz PrintNightmare module (30 days),"The Splunk search query you provided filters events from two indexes, test_windows and prod_windows, that match the following criteria:
+
+The event must come from a source that starts with ""WinEventLog"" (e.g., ""WinEventLog:Security"").
+
+The event must have either EventCode 4688 or EventCode 592.
+
+The event must have a message containing the string ""miscprintnightmare"", OR the event must have a message that contains all of the following substrings: ""server"" followed by ""library"", followed by any number of characters, followed by "".dll"".
+
+The query is searching for Windows security events that may be related to the ""PrintNightmare"" vulnerability.",Always,24h,"index IN (test_windows, prod_windows)
+source=""WinEventLog*""
+(EventCode=4688 OR EventCode=592) AND 
+(""*miscprintnightmare*"" OR (""*/server*"" AND ""*/library\\*"" AND ""*.dll""))"
+Checking for connections to the flagged domains over the last 30 days,"This Splunk search query performs the following steps:
+
+It uses the tstats command to search for events in the Web data model where the Web.dest field matches any of the specified values.
+It then selects and aggregates the minimum timestamp as Time, distinct values of Web.user as user, Web.dest as dest, Web.http_method as method, Web.url as url, Web.http_referrer as referrer, Web.http_user_agent as userAgent, Web.category as category, and Web.action as action.
+It uses the fields command to extract the selected fields Time, user, dest, url, method, referrer, userAgent, category, and action.
+Finally, it uses the convert command to convert the Time field to a human-readable timestamp format.
+Overall, the search query is used to search for web events in the specified data model that match the specified criteria and then extract and format the selected fields for further analysis.",Always,24h,"| tstats min(_time) as Time values(Web.user) AS user, values(Web.dest) AS dest, values(Web.http_method) AS method, values(Web.url) AS url, values(Web.http_referrer) AS referrer, values(Web.http_user_agent) AS userAgent, values(Web.category) AS category, values(Web.action) AS action FROM datamodel=Web WHERE Web.dest IN (""*burkecctv.swanndvr.net*"", ""*sl-nbuapp02.coveinsurance.co.uk*"", ""*wifi.vivo.com.cn.a.bdydns.com*"", ""*opencdn.jomodns.com*"", ""*opencdnvivodtml.jomodns.com*"", ""*weu1-urlp.cloudapp.net*"", ""*weu-azsc-urlp.cloudapp.net*"", ""*urlp-asm-skype.trafficmanager.net*"", ""*weu-azsc-urlp.cloudapp.net*"", ""*apps.bdimg.jomodns.com*"", ""*statres.quickapp.cn.a.bdydns.com*"", ""*opencdnssl.jomodns.com*"", ""*statres.quickapp.cn.a.bdydns.com*"", ""*matrix.cdn.bcebos.com.a.bdydns.com*"", ""*opencdn.jomodns.com*"", ""*opencdnssl.jomodns.com*"", ""*194-218-16-66.customer.telia.com*"", ""*proxy.utcluj.ro*"", ""*pc19f01fd.dip0.t-ipconnect.de*"", ""*baikebcs.bdimg.com.a.bdydns.com*"", ""*opencdnbd.jomodns.com*"", ""*statres.quickapp.cn.a.bdydns.com*"", ""*matrix.cdn.bcebos.com.a.bdydns.com*"", ""*yd.edajin.com.a.bdydns.com*"", ""*opencdn.jomodns.com*"", ""*opencdnspy.jomodns.com*"", ""*opencdnssl.jomodns.com*"", ""*boscdn.djduoduo.com.a.bdydns.com*"", ""*m.shezhan88.com.a.bdydns.com*"", ""*opencdnspy.jomodns.com*"", ""*poi-pic.cdn.bcebos.com.a.bdydns.com*"", ""*opencdnv6test.jomodns.com*"", ""*wifi.vivo.com.cn.a.bdydns.com*"", ""*poi-pic.cdn.bcebos.com.a.bdydns.com*"", ""*opencdn.jomodns.com*"", ""*opencdnv6test.jomodns.com*"", ""*opencdnvivodtml.jomodns.com*"", ""*poi-pic.cdn.bcebos.com.a.bdydns.com*"", ""*talos-bundle.cdn.bcebos.com.a.bdydns.com*"", ""*opencdn.jomodns.com*"", ""*opencdnv6test.jomodns.com*"", ""*v5-cdn.1sapp.com*"", ""*poi-pic.cdn.bcebos.com.a.bdydns.com*"", ""*v5.qutoutiao.net.a.bdydns.com*"", ""*opencdnspyv6.jomodns.com*"", ""*opencdnssl.jomodns.com*"", ""*opencdnv6test.jomodns.com*"", ""*v5.qutoutiao.net.vdncache.com*"", ""*opencdnzhihustatic.jomodns.com*"", ""*node-kcx.pool-1-4.dynamic.totinternet.net*"") AND Web.url IN (*) AND Web.http_referrer IN (*) BY Web.url
+| fields Time, user, dest, url, method, referrer, userAgent, category, action
+| convert ctime(Time)"
+Checking for connections to/from the flagged IP's over the last 30 days,"This is a Splunk search query that retrieves information about network traffic based on certain criteria. The query uses the tstats command to summarize data from the Network_Traffic data model.
+
+The WHERE clause filters the results to only include traffic where the source IP address matches one of the specified IP addresses, and the destination IP and port are not specified (i.e., any destination IP and port are included).
+
+The results are then grouped by the destination IP address and the action taken, and the fields Earliest, Latest, user, sourceIP, sourcePort, destinationIP, destinationPort, direction, and action are selected to be displayed.
+
+Finally, the convert command is used to format the Earliest and Latest fields as human-readable timestamps in the format ""dd/mm/yy HHMMSS"".
+
+Overall, this search query is used to investigate network traffic that originated from a specific set of source IP addresses and was directed to any destination IP address and port. It provides information about the user, source IP address, source port, destination IP address, destination port, direction, and action taken for each instance of this traffic.",Always,24h,"| tstats earliest(_time) AS ""Earliest"" latest(_time) AS ""Latest"" values(All_Traffic.user) AS user, 
+  values(All_Traffic.src_ip) AS sourceIP, values(All_Traffic.src_port) AS sourcePort, 
+  values(All_Traffic.dest_ip) AS destinationIP, values(All_Traffic.dest_port) AS destinationPort, 
+  values(All_Traffic.direction) AS direction, values(All_Traffic.action) AS action 
+  FROM datamodel=Network_Traffic 
+  WHERE All_Traffic.src_ip IN (
+    77.75.244.131, 70.32.1.32, 58.217.200.35, 52.114.75.71, 52.114.75.216, 42.101.56.49, 
+    220.169.152.35, 219.153.113.35, 194.218.16.66, 193.226.5.155, 193.226.5.148, 193.159.1.253, 
+    180.101.38.35, 171.107.86.38, 171.107.86.35, 124.236.41.35, 124.236.104.35, 124.225.184.35, 
+    123.52.189.35, 121.227.7.35, 120.71.177.35, 118.180.30.35, 117.91.181.35, 113.96.178.41, 
+    110.80.30.35, 106.225.194.49, 106.225.194.35, 1.4.231.17
+  ) 
+  All_Traffic.dest_ip IN (*) 
+  All_Traffic.dest_port IN (*) 
+  BY All_Traffic.dest_ip, All_Traffic.action 
+| fields Earliest, Latest, user, sourceIP, sourcePort, destinationIP, destinationPort, direction, action 
+| convert ctime(""Earliest"") ctime(""Latest"") timeformat=""%d/%m/%y %H%M%S"""
+Checking for malware events using flagged domains over the last 30 days,"This Splunk search query searches for events related to the Malware datamodel, which contains data related to malware attacks. Specifically, it retrieves the count of events that have a value in any of the Malware_Attacks fields that match any of the specified patterns.
+
+The tstats command is used to compute statistics from a set of events, and the summariesonly=t option tells Splunk to only return the aggregated results, rather than the raw events.
+
+The from datamodel=Malware clause specifies that the events should be retrieved from the Malware datamodel.
+
+The WHERE clause filters the events based on the values of the Malware_Attacks fields. The .* in the patterns match any characters before and after the specified string. The IN keyword indicates that any of the specified patterns can match to retrieve an event.
+
+Overall, the query returns the count of events that have any of the specified strings in any of the Malware_Attacks fields.",Always,24h,"| tstats count summariesonly=t from datamodel=Malware WHERE Malware_Attacks.* IN (""*burkecctv.swanndvr.net*"",
+""*sl-nbuapp02.coveinsurance.co.uk*"",
+""*wifi.vivo.com.cn.a.bdydns.com*"",
+""*opencdn.jomodns.com*"",
+""*opencdnvivodtml.jomodns.com*"",
+""*weu1-urlp.cloudapp.net*"",
+""*weu-azsc-urlp.cloudapp.net*"",
+""*urlp-asm-skype.trafficmanager.net*"",
+""*apps.bdimg.jomodns.com*"",
+""*statres.quickapp.cn.a.bdydns.com*"",
+""*opencdnssl.jomodns.com*"",
+""*matrix.cdn.bcebos.com.a.bdydns.com*"",
+""*194-218-16-66.customer.telia.com*"",
+""*proxy.utcluj.ro*"",
+""*pc19f01fd.dip0.t-ipconnect.de*"",
+""*baikebcs.bdimg.com.a.bdydns.com*"",
+""*opencdnbd.jomodns.com*"",
+""*yd.edajin.com.a.bdydns.com*"",
+""*boscdn.djduoduo.com.a.bdydns.com*"",
+""*m.shezhan88.com.a.bdydns.com*"",
+""*poi-pic.cdn.bcebos.com.a.bdydns.com*"",
+""*opencdnv6test.jomodns.com*"",
+""*talos-bundle.cdn.bcebos.com.a.bdydns.com*"",
+""*v5-cdn.1sapp.com*"",
+""*v5.qutoutiao.net.a.bdydns.com*"",
+""*opencdnspyv6.jomodns.com*"",
+""*v5.qutoutiao.net.vdncache.com*"",
+""*opencdnzhihustatic.jomodns.com*"",
+""*node-kcx.pool-1-4.dynamic.totinternet.net"") "
+Checking for malware events using flagged IPS over the last 30 days,"This Splunk search query is searching for events related to malware attacks by using the tstats command to retrieve the count of events that match the specified criteria. The search is limited to the datamodel named ""Malware"" and is looking for events that have any field under the Malware_Attacks data model that match any of the specified IP addresses.
+
+The summariesonly=t option is used to return only summarized results, which means that the output will show only the total count of events that match the search criteria, without showing the individual events.
+
+In summary, this search query is looking for the total count of events related to malware attacks from the specified list of IP addresses within the Malware datamodel.",Always,24h,"| tstats count summariesonly=t from datamodel=Malware WHERE Malware_Attacks.* IN (77.75.244.131, 70.32.1.32, 58.217.200.35, 52.114.75.71, 52.114.75.216, 42.101.56.49, 220.169.152.35, 219.153.113.35, 194.218.16.66, 193.226.5.155, 193.226.5.148, 193.159.1.253, 180.101.38.35, 171.107.86.38, 171.107.86.35, 124.236.41.35, 124.236.104.35, 124.225.184.35, 123.52.189.35, 121.227.7.35, 120.71.177.35, 118.180.30.35, 117.91.181.35, 113.96.178.41, 110.80.30.35, 106.225.194.49, 106.225.194.35, 1.4.231.17)"
+Checkpoint Address Spoofing,"This Splunk search query retrieves information from the ""prod_checkpoint"" index where the action is ""Detect"". It then uses the ""stats"" command to count the number of events for each unique combination of values in the ""origin"", ""src_ip"", ""message_info"", ""dest_ip"", and ""dest_port"" fields.
+
+The ""lookup"" command is then used to add a new field to the search results by referencing another dataset named ""MySubnets"". Specifically, it maps the ""src_ip"" and ""dest_ip"" fields to the ""subnet"" field in the ""MySubnets"" dataset, and retrieves the corresponding value from the ""location"" field in that dataset. The resulting fields are named ""src_location"" and ""dest_location"".
+
+The search results are then sorted in descending order by the ""count"" field using the ""sort"" command. The ""search"" command is then used to filter the results to only show events where the ""count"" field is greater than 500. Finally, the ""table"" command is used to display only the specified fields, including the ""origin"", ""src_ip"", ""src_location"", ""message_info"", ""dest_ip"", ""dest_port"", ""dest_location"", and ""count"".
+
+In summary, this search query retrieves and displays information about network traffic events where the ""action"" field is ""Detect"" in the ""prod_checkpoint"" index, and where the number of events for a unique combination of values in several fields is greater than 500. It also includes additional information about the source and destination locations of the traffic.",Always,24h,"index=prod_checkpoint action=Detect 
+| stats count by origin, src_ip, message_info, dest_ip , dest_port 
+| lookup MySubnets subnet as src_ip OUTPUT location as src_location 
+| lookup MySubnets subnet as dest_ip OUTPUT location as dest_location
+| sort -count 
+| search count > 500
+| table origin, src_ip, src_location, message_info, dest_ip, dest_port, dest_location, count"
+Checkpoint Firewall Blocks,"This is a search query written in the Splunk query language. It is used to search for specific events in a data set stored in the ""prod_checkpoint"" index.
+
+Here's what the query does step by step:
+
+Filter events with the action ""Drop"" and exclude the external IP address from the results.
+
+Aggregate the results using the ""stats"" command to count the number of events by specific fields such as origin, source IP, destination IP, destination port, action, rule name, and the index where the event was found.
+
+Sort the results in descending order based on the count of events using the ""sort"" command.
+
+Select the top 20 results using the ""head"" command.
+
+Perform a lookup in the ""MySubnets"" data set to map the source and destination IP addresses to their corresponding location.
+
+Perform a lookup in the ""WellKnownPorts"" data set to map the destination port number to its description.
+
+Rename the ""origin"" field to ""Firewall"".
+
+Select and display the fields count, Firewall, source IP, source location, destination IP, destination port, port description, destination location, and rule name using the ""table"" command.
+
+In summary, this query is used to search for dropped traffic events in the ""prod_checkpoint"" index, and it provides detailed information about the source and destination of these events, as well as the rule name that caused the drop, and the location of the source and destination IP addresses.",Always,24h,"index=prod_checkpoint action=Drop dest_ip!=""Whatever the external IP address is""
+| stats count by index, origin, src_ip, dest_ip, dest_port, action, rule_name
+| sort -count
+| head 20
+| lookup MySubnets subnet as src_ip OUTPUT location as src_location 
+| lookup MySubnets subnet as dest_ip OUTPUT location as dest_location
+| lookup WellKnownPorts port as dest_port OUTPUT description as Port
+| rename origin as ""Firewall""
+| table count, Firewall, src_ip, src_location, dest_ip, dest_port,Port,  dest_location, rule_name"
+Checkpoint Not Accepts,"The Splunk search query you provided performs the following actions:
+
+Search for events in the ""prod_checkpoint"" index where the ""action"" field does not equal ""Accept"".
+Group the events by the ""origin"", ""src_ip"", ""action"", ""dest_ip"", and ""dest_port"" fields, and count the number of events in each group.
+Look up the ""src_ip"" and ""dest_ip"" values in the ""MySubnets"" lookup table and add the corresponding ""location"" field to the results as ""src_location"" and ""dest_location"" respectively.
+Sort the results in descending order based on the count of events.
+Display the results in a table that includes the ""origin"", ""src_ip"", ""src_location"", ""action"", ""dest_ip"", ""dest_port"", ""dest_location"", and ""count"" fields.
+In summary, the search query helps to identify the number of events grouped by origin, source IP, action, destination IP, and port, and then provides location information for both the source and destination IPs by performing a lookup on a lookup table. The final result is presented in a tabular format.",Always,24h,"index=prod_checkpoint action!=Accept
+|  stats count by origin, src_ip, action, dest_ip , dest_port
+| lookup MySubnets subnet as src_ip OUTPUT location as src_location
+| lookup MySubnets subnet as dest_ip OUTPUT location as dest_location
+| sort -count
+| table origin, src_ip, src_location, action, dest_ip, dest_port , dest_location , count"
+Checkpoint Scanner Blocks,"This Splunk search query is looking for events in the ""prod_checkpoint"" index where the action is ""Drop"" and the source IP address is one of the listed IP addresses. The IP addresses are divided into two groups, one labeled as ""Rapid 7 Scan Engines"" and the other as ""Servers for Service Now"". The query then uses the ""stats"" command to aggregate the events by various fields, including the source IP address, destination IP address, destination port, and the name of the firewall rule that triggered the event. The query then sorts the results in descending order by the count of events and performs two lookups against a lookup table named ""MySubnets"" to translate the source and destination IP addresses into their corresponding locations. Finally, the results are displayed in a table format that includes the count of events, the name of the firewall, the source IP address and location, the destination IP address and location, the destination port, and the name of the firewall rule.",Always,24h,"index=prod_checkpoint action=Drop src_ip IN (
+``` Rapid 7 Scan Engines ```
+""10.70.90.20"",
+""10.70.90.21"",
+""10.70.90.22"",
+""10.80.90.20"",
+""10.80.90.21"",
+""10.80.90.22"",
+``` Servers for Service Now ```
+""10.70.181.10"",
+""10.70.181.11"",
+""10.70.181.12"",
+""10.80.181.10"",
+""10.80.181.11"",
+""10.80.181.12""
+)
+| stats count by index, origin, src_ip, dest_ip, dest_port, action, rule_name
+| sort -count
+| lookup MySubnets subnet as src_ip OUTPUT location as src_location 
+| lookup MySubnets subnet as dest_ip OUTPUT location as dest_location
+| rename origin as ""Firewall""
+| table count, firewall, src_ip, src_location, dest_ip, dest_port, dest_location, rule_name"
+Checkpoint Top Talkers V3,,Always,24h,"| tstats summariesonly=t sum(All_Traffic.bytes) AS Bytes sum(All_Traffic.bytes_in) as Bytes_In sum(All_Traffic.bytes_out) as Bytes_Out FROM datamodel=Network_Traffic WHERE sourcetype=""cp_Firewall"" All_traffic.dest_ip=""Whatever the external IP address is"" NOT All_Traffic.action IN (""Drop"") BY All_Traffic.src_ip, All_Traffic.action, All_Traffic.dest_ip
+| rename All_Traffic.* AS * 
+| lookup MySubnets subnet as src_ip OUTPUT location as src_location 
+| lookup MySubnets subnet as dest_ip OUTPUT location as dest_location 
+| rename src_ip AS ""Source IP""
+| eval GBytes = round(Bytes / 1024 /1024 /1024, 2) 
+| eval GBytes_Out = round(Bytes_Out / 1024 /1024 /1024, 2) 
+| eval GBytes_In = round(Bytes_In / 1024 /1024 /1024, 2) 
+| sort - Bytes
+| head 20
+| fields ""Source IP"", src_location, action, GBytes, GBytes_In, GBytes_Out , dest_ip, dest_location"
+Cisco Scanner Blocks,,Always,24h,"index=prod_cisco_asa Cisco_ASA_action=den* src_ip IN (
+    ""10.70.90.20"",
+    ""10.70.90.21"",
+    ""10.70.90.22"",
+    ""10.80.90.20"",
+    ""10.80.90.21"",
+    ""10.80.90.22"",
+    ""10.70.181.10"",
+    ""10.70.181.11"",
+    ""10.70.181.12"",
+    ""10.80.181.10"",
+    ""10.80.181.11"",
+    ""10.80.181.12""
+)
+| stats count by index, host, src_ip, dest_ip, dest_port, Cisco_ASA_action, rule_id
+| sort -count
+| lookup MySubnets subnet as src_ip OUTPUT location as src_location
+| lookup MySubnets subnet as dest_ip OUTPUT location as dest_location
+| rename host as ""Firewall""
+| table count, Firewall, src_ip, src_location, dest_ip, dest_port, dest_location, rule_id"
+DNS Analysis,Analysis of DNS Traffic,Always,24h,"| tstats summariesonly=t count FROM datamodel=Network_Traffic WHERE sourcetype=""cp_Firewall"" All_Traffic.dest_port=""53"" All_Traffic.src_ip=* All_Traffic.dest_ip=""*"" BY All_Traffic.src_ip, All_Traffic.action, All_Traffic.dest_ip, All_Traffic.dest_port
+| rename All_Traffic.* AS *
+| lookup MySubnets subnet AS src_ip OUTPUT location AS ""Source Location""
+| lookup MySubnets subnet AS dest_ip OUTPUT location AS ""Destination Location""
+| rename src_ip AS ""Source IP"", dest_ip AS ""Destination IP"", dest_port AS ""Destination Port""
+| fields ""Source Location"", ""Source IP"", ""Destination Location"", ""Destination IP"", ""Destination Port"", action, count
+| sort -count"
+DNS Analysis,Analysis of DNS Traffic,Always,24h,"| tstats summariesonly=t count FROM datamodel=Network_Traffic 
+WHERE sourcetype=""cp_Firewall"" 
+AND All_Traffic.dest_port=""53"" 
+AND NOT All_Traffic.dest_ip IN (""0.0.0.0"", ""10.10.150.2"", ""10.60.1.10"", ""10.60.8.10"", 
+""10.60.8.11"", ""10.60.80.10"", ""10.70.20.10"", ""10.70.20.11"", ""10.80.20.10"", 
+""10.80.20.11"", ""10.80.40.101"", ""10.10.150.1"", ""10.200.44.5"", ""172.18.128.99"", 
+""255.255.255.255"") 
+AND NOT All_Traffic.src_ip IN (""0.0.0.0"", ""10.10.150.2"", ""10.60.1.10"", ""10.60.8.10"", 
+""10.60.8.11"", ""10.60.80.10"", ""10.70.55.10"", ""10.70.20.10"", ""10.70.20.11"", 
+""10.80.20.10"", ""10.80.20.11"", ""10.80.20.83"", ""10.80.40.101"", ""10.200.44.5"", 
+""172.18.128.98"", ""172.18.128.99"", ""10.70.20.83"", ""255.255.255.255"") 
+AND NOT All_Traffic.dvc IN (""10.60.10.252"", ""10.60.10.253"", ""10.60.73.252"", ""10.60.73.253"", 
+""172.18.248.123"", ""172.18.248.125"") 
+AND NOT All_Traffic.action IN (""Detect"", ""Prevent"", ""Drop"") 
+BY All_Traffic.src_ip, All_Traffic.action, All_Traffic.dest_ip 
+| rename All_Traffic.* AS * 
+| sort - count 
+| lookup MySubnets subnet AS src_ip OUTPUT location AS src_location 
+| lookup MySubnets subnet AS dest_ip OUTPUT location AS dest_location 
+| rename src_ip AS ""Source IP"" 
+| fields ""Source IP"", src_location, action, count, dest_ip, dest_location"
+Dynatrace Blocks,,Always,24h,"index=prod_checkpoint action=Drop dest_ip IN (""52.211.92.185"", ""63.33.149.166"", ""63.34.224.115"", ""34.246.164.174"", ""108.128.127.88"", ""54.73.50.132"", ""54.194.226.107"", ""34.249.56.77"", ""54.73.199.74"", ""34.249.78.239"", ""34.241.194.10"", ""54.220.249.199"", ""54.76.0.28"", ""54.247.149.59"", ""63.34.231.89"", ""54.72.59.249"", ""10.70.10.77"", ""10.60.1.77"", ""10.70.20.207"", ""10.70.20.208"")
+| stats count by index, origin, src_ip, dest_ip, dest_port, action, rule_name
+| sort -count
+| lookup MySubnets subnet as src_ip OUTPUT location as src_location
+| lookup MySubnets subnet as dest_ip OUTPUT location as dest_location
+| rename origin as ""Firewall""
+| table count, Firewall, src_ip, src_location, dest_ip, dest_port, dest_location, rule_name"
+Dynatrace Cisco Blocks,,Always,24h,"index=prod_cisco_asa Cisco_ASA_action=den* dest_ip IN (""52.211.92.185"",""63.33.149.166"",""63.34.224.115"",""34.246.164.174"",""108.128.127.88"",""54.73.50.132"",""54.194.226.107"",""34.249.56.77"",""54.73.199.74"",""34.249.78.239"",""34.241.194.10"",""54.220.249.199"",""54.76.0.28"",""54.247.149.59"",""63.34.231.89"",""54.72.59.249"",""10.70.10.77"",""10.60.1.77"",""10.70.20.207"",""10.70.20.208"")
+| stats count by index, host, src_ip, dest_ip, dest_port, Cisco_ASA_action, rule_id
+| sort -count
+| lookup MySubnets subnet as src_ip OUTPUT location as src_location 
+| lookup MySubnets subnet as dest_ip OUTPUT location as dest_location
+| rename host as ""Firewall""
+| table count, Firewall, src_ip, src_location, dest_ip, dest_port, dest_location, rule_id"
+Events by timeacross all prod indexs,,Always,24h,"| tstats prestats=t count WHERE index=prod_* AND sourcetype=""*"" BY sourcetype, _time, indextime span=1m
+| timechart count BY sourcetype span=1h"
+Events going into all known AWS Accounts,Lists all the accounts in  AWSAccountAlias with a count of each,Always,24h,"index=prod_aws 
+| rename aws_account_id as AccountID
+| stats count by AccountID
+| inputlookup append=true AWSAccountAlias
+| fillnull count 
+| stats sum(count) as count by AccountID
+| sort -count
+| lookup AWSAccountAlias AccountID as AccountID OUTPUT AccountName, Description
+| table AccountID, AccountName, Description, count"
+File Hash Search (30d),,Always,24h,"index=prod_windows OR index=prod_sophos_onprem sourcetype=WinEventLog 
+(3f8975af51c5028a28097bd0fecc58a92f083abaa347c1f3565fe0309f0286 OR 
+7c24d99685623b604aa4b2686e9c1b843a4243eb1b0b7b096d73bcae3d8d5a79 OR 
+0f0e25e859bc6f21447ed196d557eb6cdba9737dd3de22a5183a505da0126302 OR 
+ac92d4c6397eb4451095949ac485ef4ec38501d7bb6f475419529ae67e297753 OR 
+b76e2eea653b480c8a559215aa08806fad4c83c60f9a5996e89d51709212ee29 OR 
+e6b0a56662d1f0544257c63e63b2f85ad7215f0df3a7f5a689dee66f27e24db7 OR 
+c087de89a3e2c83eb0e5b4bf11de01082518d2099667a63fb49df23206b132e3 OR 
+714f3edd04dcce475992d4b173a99ed1a10783d6b5b22cb342884875226396ab OR 
+878c2d30ac544c9cb9353675313cfd0b9e2cd4f1952f451b44b9c68849a403e8 OR 
+f6ffead3b5f3db5a7a00d1fef874c3d3ed7ecf095da2d981ebd691fdfa685716 OR 
+91450c079b924cdbe85c774ac414ee8824cb4182764c51c11c7f0a6fcf11b800 OR 
+00ef6637bea63d139f497f9b19c72bc526b85ab40d4ed62a1558930c0ebaa6e5 OR 
+95363884cf0cfa8a086cd09714ec1825469f2bfae513e908ec2ea1ffb4215143 OR 
+afb49eb1848957358695dabc101257dc008b327aaa45d6651dbfeebca646622f OR 
+fcdb76dd9ed127aa0d67615e30a9fbe167e6d5470b943e3a2aa4c33039e21c38 OR 
+7dc6d17f523f0e5edf4299c719c6272afc9c53a57c4a9a8cbdc099d00eec1623 OR 
+7a248603f91082b2f7d34037ed9974a39716fe72483002616d43eca59fc1e6dd OR 
+6660186d53830ad8135e7cd6205f79da69319871e636fba913b3465913ecf2ce OR 
+eba8b7356da43b24b7e62f362ada126596043a38bc5d8d3a9138a9b484d36e3e OR 
+67ee96c3666d51"
+File Hashes (90d),,Always,24h,"index IN (prod_windows, prod_sophos_onprem) sourcetype=WinEventLog (""0c451e42735fa72cb36d1cc6911cd78ff5a6605bbf104c5f43b90342b1cc38db"" OR ""11959868974ed014b69f572db4c68a1e7547121a759241e32856f208b64c88a8"" OR ""1498e1536f2beb0d4e2ff9e1ace10e5c37fde536b3ed8d3ac2f6614ef37c9216"" OR ""18712de3ff1e2af3255f76ccb40bf79e6f58599e15b7c148c87e8720438f56b6"" OR ""1dc196190e82a017a81937d0b42f96ecd86673b7cc4d4a5fcebe0b4c63495879"" OR ""1df87baeeac67f7eadf3875c0a12a610ec21b285e6b6be97bc0c6969b33277e7"" OR ""1e7e024929426dc634eb67cdf25e1ea621bcaa437707f1956a96c62d66307c30"" OR ""1ebcb62975ca935c0c538d1a421fe94c35c42ca42ebae3fdddce3b23240899b0"" OR ""2047537c162e02f2135b3386f5cfec72c94a7dbe030c7ec12083a93e0a308d3b"" OR ""4d11b045a577258f2ed62c1a56584c6ad8b0128398d19e2ad114c53dc091a734"" OR ""62438d9ec56061fb81f514d6c8eff718f765d3101c16f70051c605deb3e4d788"" OR ""74e23bf9c148dda32dd64e972a6eca790fef3e53008b80242b0732eefb283d51"" OR ""78568ae742d82478786a06e8639fac6a2da6fa032a576ba89bc85261771abb18"" OR ""7f6ebd301c47243a0c909c8f59f1600eacfe56dba2ccfb2639b24d9b16c9ec92"" OR ""8176f5b87011d4d4db43e23663350820ef7a8f31ab452cf5ceae53b49d51b41e"" OR ""823d10a3218a7fb185e70351870c21dcdbd175755a6da60c2cf5a5126904765d"" OR ""83f1e0aceccf0ee054b7f0a933f3ccea3b2306d5b3bea741ea9206c08428a58f"" OR ""91b5b42102b2a55ccf2cf8644e6c310c85b4061ec9ecdc228929769d51cf9ee3"" OR ""a8546a9766dec41398b77083033656665b0b"
+File Search (90d),,Always,24h,"index=* (""CORE-2019.4.5220.20574-SolarWinds-Core-v2019.4.5220-Hotfix5.msp"" OR ""Solarwinds Worldwide, LLC"" OR ""SolarWinds.Orion.Core.BusinessLayer.dll"" OR ""OrionImprovementBusinessLayer.2.cs"" OR ""app_web_logoimagehandler.ashx.b6031896.dll"")"
+Firewall Block Analysis,,Always,24h,"| tstats summariesonly=t count FROM datamodel=Network_Traffic WHERE 
+    All_Traffic.dest_ip IN (
+    )
+    All_Traffic.src_ip IN (
+    ""0.0.0.0"",
+    ""10.*"",
+    ""192.168.*"",
+    ""172.16.*"",
+    ""172.17.*"",
+    ""172.18.*"",
+    ""172.19.*"",
+    ""172.20.*"",
+    ""172.21.*"",
+    ""172.22.*"",
+    ""172.23.*"",
+    ""172.24.*"",
+    ""172.25.*"",
+    ""172.26.*"",
+    ""172.27.*"",
+    ""172.28.*"",
+    ""172.29.*"",
+    ""172.30.*"",
+    ""172.31.*"",
+    ""255.255.255.255""
+    )
+    NOT All_Traffic.dvc IN (
+        ""10.60.10.252"",
+        ""10.60.10.253"",
+        ""10.60.73.252"",
+        ""10.60.73.253"",
+        ""172.18.248.123"",
+        ""172.18.248.125""
+    ) 
+    NOT All_Traffic.action IN (
+        ""permitted"",
+        ""built"",
+        ""Accept"",
+        ""Detect""
+    )
+    BY 
+        All_Traffic.dvc,
+        All_Traffic.src_ip,
+        All_Traffic.action,
+        All_Traffic.dest_ip, 
+        All_Traffic.dest_port,
+        All_Traffic.protocol
+| rename All_Traffic.* AS *
+| sort - count
+| lookup MySubnets subnet as src_ip OUTPUT location as src_location 
+| lookup MySubnets subnet as dest_ip OUTPUT location as dest_location 
+| lookup WellKnownPorts port as dest_port OUTPUT description as Port_Description
+| rename src_ip AS ""Source IP""
+| fields dvc, ""Source IP"", src_location, action, count , dest_ip, protocol, dest_port, Port_Description , dest_location"
+Firewall Ingestion Usage,,Always,24h,"index=""sim_licensing_usage_base"" idx IN (""prod_checkpoint"",""prod_cisco_asa"")
+| `sim_licensing_usage_all(""idx"")`
+| eval ingestion=GB 
+| fields - GB volume"
+Heavy Forwarder Blocking,Heavy Forwarder Analysis,Always,24h,"| tstats summariesonly=t count FROM datamodel=Network_Traffic 
+WHERE sourcetype=""cp_Firewall"" 
+AND All_Traffic.dest_ip IN (
+    ""172.22.96.10"", 
+    ""172.22.96.11"", 
+    ""172.22.96.30"",
+    ""172.22.96.41"", // Deployment Server
+    ""172.25.96.10"", 
+    ""172.25.96.11"",
+    ""172.25.96.30""
+)
+AND NOT All_Traffic.src_ip IN (
+    ""0.0.0.0"", 
+    ""10.70.181.11"",
+    ""10.80.181.10"",
+    ""255.255.255.255""
+)
+AND NOT All_Traffic.dvc IN (
+    ""10.60.10.252"",
+    ""10.60.10.253"",
+    ""10.60.73.252"",
+    ""10.60.73.253"", 
+    ""172.18.248.123"",
+    ""172.18.248.125""
+)
+AND All_Traffic.action IN (""Prevent"", ""Drop"")
+BY All_Traffic.src_ip, All_Traffic.action, All_Traffic.dest_ip, All_Traffic.dest_port
+| rename All_Traffic.* AS *
+| sort - count
+| lookup MySubnets subnet as src_ip OUTPUT location as src_location 
+| lookup MySubnets subnet as dest_ip OUTPUT location as dest_location 
+| lookup WellKnownPorts port as dest_port OUTPUT description as Port_Description
+| rename src_ip AS ""Source IP""
+| fields ""Source IP"", src_location, action, count , dest_ip, dest_port, Port_Description, dest_location"
+Heavy Forwarder Blocks,,Always,24h,"index=prod_checkpoint action=Drop dest_ip IN (""172.22.96.10"",""172.22.96.11"",""172.25.96.10"",""172.25.96.11"")
+| stats count by index, origin, src_ip, dest_ip, dest_port, action, rule_name
+| sort -count
+| lookup MySubnets subnet as src_ip OUTPUT location as src_location
+| lookup MySubnets subnet as dest_ip OUTPUT location as dest_location
+| rename origin as Firewall
+| table count, Firewall, src_ip, src_location, dest_ip, dest_port, dest_location, rule_name"
+IPv4 Search,,Always,24h,"| tstats summariesonly=t count min(_time) as firstTime max(_time) as lastTime values(All_Traffic.src_ip) as ""src_ip"" values(All_Traffic.dvc) as dvc values(All_Traffic.protocol) as ""protocol"" values(All_Traffic.src_zone) as ""src_zone"" values(All_Traffic.user) as ""user"" from datamodel=Network_Traffic where All_Traffic.dest_ip IN (*198.55.119.112*, *45.58.112.77*, *23.229.111.197*, *23.229.111.197*, *185.208.158.208*) by All_Traffic.dest_ip All_Traffic.action All_Traffic.app 
+| convert ctime(lastTime) ctime(firstTime) timeformat=""%Y/%m/%d %H%M"""
+IPv4 Search(7d),,Always,24h,"index=prod_checkpoint OR index=prod_cisco_asa OR index=prod_cisco_ise 
+(134.19.177.46 OR 194.33.45.132 OR 103.133.104.124 OR 103.232.55.27 OR 194.5.98.38 
+OR 103.207.36.177 OR 185.222.58.147 OR 194.5.97.87 OR 5.206.224.194 OR 185.19.85.176 
+OR 104.171.113.195 OR 103.151.123.132 OR 31.210.21.99 OR 103.151.123.132 OR 31.210.20.96 
+OR 87.98.245.48 OR 185.38.142.241 OR 104.236.223.230 OR 185.38.142.241 OR 79.134.225.104 
+OR 185.203.119.28 OR 103.133.109.176 OR 64.188.13.141 OR 193.218.118.85 OR 74.125.193.102)
+| table category sourcetype index url user cs_host c_ip time date action dest dvc site"
+Look for connections towards malicious IPS (90d),,Always,24h,"index IN (prod_windows prod_sophos_onprem)
+[| inputlookup sunburst-domains.csv| rename ip as src | fields src] 
+| stats values(src) AS Sunburst BY host"
+Malicious Domains (90d),,Always,24h,"| tstats min(_time) as Time values(Web.user) AS user, values(Web.dest) AS dest, 
+  values(Web.http_method) AS method, values(Web.url) AS url, values(Web.http_referrer) AS referrer, 
+  values(Web.http_user_agent) AS userAgent, values(Web.category) AS category, values(Web.action) AS 
+  action FROM datamodel=Web WHERE Web.dest IN (
+  ""*bunikabatedoba13.top*"",
+  ""*bvnotike.667.top*"",
+  ""*jokimutinke.net*"",
+  ""*opiutunuza11.net*"",
+  ""*ujnuyteeej.top*"",
+  ""*ff.dfbkmoeiruoiumoeio.pro*"",
+  ""*x.demolist.org*"",
+  ""*nerdasss33.top*"",
+  ""*fin.sleeptimellc.net*"",
+  ""*support.hebit.at*"",
+  ""*pp.ekrjhgkjjhvhkkdfgd.pro*"",
+  ""*prod-tp.sumo.mozit.cloud*"",
+  ""*makron.bit*"",
+  ""*a1815.dscr.akamai.net*"",
+  ""*filezilla-project.org*"",
+  ""*erwwbasmhtm.com*"",
+  ""*fbnurqhsbun.com*""
+  ) AND Web.url IN (*)
+| fields Time, user, dest, url, method, referrer, userAgent, category, action
+| convert ctime(Time)"
+Malicious Domains (90d),,Always,24h,"| tstats min(_time) as Time values(Web.user) AS user, values(Web.dest) AS dest, 
+  values(Web.http_method) AS method, values(Web.url) AS url, values(Web.http_referrer) AS referrer, 
+  values(Web.http_user_agent) AS userAgent, values(Web.category) AS category, values(Web.action) AS action 
+  FROM datamodel=Web WHERE Web.dest IN (""*new.www1.biz*"", ""*smasters.otzo.com*"", ""*sriggggs.dynamic-dns.net*"", 
+  ""*punisher.shacknet.us*"", ""*italidiegwu12.duckdns.org*"", ""*jbfrost.live*"", ""*nectarclampplaza.com*"", ""*str-master.pw*"") 
+  AND Web.url IN (""*"") AND Web.http_referrer IN (""*"") 
+  BY Web.url 
+| fields Time, user, dest, url, method, referrer, userAgent, category, action 
+| convert ctime(Time)"
+Malicious IP's (30d),,Always,24h,"| tstats earliest(_time) as Earliest latest(_time) as Latest 
+  values(All_Traffic.user) as user 
+  values(All_Traffic.src_ip) as sourceIP 
+  values(All_Traffic.src_port) as sourcePort 
+  values(All_Traffic.dest_ip) as destinationIP 
+  values(All_Traffic.dest_port) as destinationPort 
+  values(All_Traffic.direction) as direction 
+  values(All_Traffic.action) as action 
+  from datamodel=Network_Traffic 
+  where All_Traffic.src_ip IN (
+    50.21.183.63 
+    50.3.75.246 
+    199.21.113.151 
+    203.150.19.63 
+    173.243.126.142 
+    104.107.28.123 
+    23.6.24.15 
+    23.209.185.159 
+    185.121.177.177 
+    13.107.21.200 
+    172.217.10.142 
+    130.255.78.223 
+    185.121.177.53 
+    144.76.133.38 
+    45.63.25.55 
+    27.100.36.191 
+    89.18.27.34 
+    178.63.145.230 
+    104.168.144.17 
+    62.113.203.55 
+    192.35.177.64 
+    23.6.65.194 
+    195.201.179.207 
+    104.20.21.251 
+    23.3.13.137
+  ) 
+  All_Traffic.dest_ip IN (*) All_Traffic.dest_port IN (*) 
+  by All_Traffic.dest_ip, All_Traffic.action 
+| fields Earliest, Latest, user, sourceIP, sourcePort, destinationIP, destinationPort, direction, action 
+| convert ctime(Earliest) ctime(Latest) 
+  timeformat=""%d/%m/%y %H%M%S"""
+NTP Analysis,Analysis of NTP Traffic,Always,24h,"| tstats summariesonly=t count FROM datamodel=Network_Traffic 
+WHERE sourcetype=""cp_Firewall"" 
+AND All_Traffic.dest_port=""123"" 
+AND NOT All_Traffic.dest_ip IN (
+    ""0.0.0.0"",
+    ""192.168.9.3"", // NTP Reading
+    ""192.168.9.2"", // NTP Reading
+    ""255.255.255.255""
+)
+AND NOT All_Traffic.src_ip IN (
+    ""0.0.0.0"", 
+    ""10.70.190.100"", // DC1 NTP
+    ""10.80.190.100"", // DC2 NTP
+    ""255.255.255.255""
+)
+AND NOT All_Traffic.dvc IN (
+    ""10.60.10.252"", 
+    ""10.60.10.253"", 
+    ""10.60.73.252"", 
+    ""10.60.73.253"",
+    ""172.18.248.123"", 
+    ""172.18.248.125""
+)
+AND NOT All_Traffic.action IN (""Detect"", ""Prevent"", ""Drop"")
+BY All_Traffic.src_ip, All_Traffic.action, All_Traffic.dest_ip
+| rename All_Traffic.* AS *
+| sort - count
+| lookup MySubnets subnet AS src_ip OUTPUT location AS src_location 
+| lookup MySubnets subnet AS dest_ip OUTPUT location AS dest_location 
+| rename src_ip AS ""Source IP""
+| fields ""Source IP"", src_location, action, count, dest_ip, dest_location"
+Readin Traffic,Analysis of Traffic going through the Reading Firewall,Always,24h,"| tstats summariesonly=t count FROM datamodel=Network_Traffic WHERE 
+sourcetype=""cp_Firewall"" 
+All_Traffic.dest_port=""*"" 
+NOT All_Traffic.dest_ip IN (""0.0.0.0"", ""255.255.255.255"") 
+NOT All_Traffic.src_ip IN (""0.0.0.0"", ""10.10.0.*"", ""10.10.1.*"", ""10.10.2.*"", ""10.10.3.*"", 
+""10.10.4.*"", ""10.10.8.*"", ""10.10.7.*"", ""10.10.10.*"", ""10.10.15.*"", ""10.10.110.*"", ""10.10.150.18"", 
+""10.10.150.37"", ""10.10.150.100"", ""10.10.150.89"", ""10.10.150.99"", ""10.10.150.10"", ""10.10.200.50"", 
+""10.10.200.51"", ""10.10.150.60"", ""10.10.150.5"", ""10.10.150.4"", ""10.10.150.11"", ""192.168.40.*"", 
+""192.168.9.*"", ""192.168.7.*"", ""10.10.190.*"", ""255.255.255.255"") 
+NOT All_Traffic.dvc IN (""10.60.10.252"", ""10.60.10.253"", ""10.60.73.252"", ""10.60.73.253"", 
+""172.18.248.123"", ""172.18.248.125"") 
+NOT All_Traffic.Action IN (""Detect"", ""Prevent"", ""Drop"") 
+BY All_Traffic.src_ip, All_Traffic.dest_port, All_Traffic.direction, All_Traffic.dest_ip, 
+All_Traffic.action, All_Traffic.dest_translated_ip 
+| rename All_Traffic.* AS * 
+| sort - count 
+| lookup MySubnets subnet as src_ip OUTPUT location as src_location 
+| lookup MySubnets subnet as dest_ip OUTPUT location as dest_location
+| lookup MySubnets subnet as dest_translated_ip OUTPUT location as final_location 
+| rename src_ip AS ""Source IP"", dest_ip AS ""Destination IP"", dest_port AS Port, direction AS ""FW 
+Determined Direction"" 
+| fields ""Source IP"", src_location, ""Destination IP"", dest_location, Port, dest_translated_ip, 
+final_location, Action, count"
+Reading Traffic Clone,Analysis of Traffic going through the Reading Firewall,Always,24h,"| tstats summariesonly=t count FROM datamodel=Network_Traffic 
+WHERE sourcetype=""CheckPoint_Firewall"" 
+    All_Traffic.dest_port=""*"" 
+    NOT All_Traffic.dest_ip IN (
+        ""0.0.0.0"",
+        ""255.255.255.255""
+    )
+    NOT All_Traffic.src_ip IN (
+        ""0.0.0.0"", 
+        ""10.10.0.*"",
+        ""10.10.1.*"",
+        ""10.10.2.*"",
+        ""10.10.3.*"",
+        ""10.10.4.*"",
+        ""10.10.8.*"",
+        ""10.10.7.*"",
+        ""10.10.10.*"",
+        ""10.10.15.*"",
+        ""10.10.110.*"",
+        ""10.10.150.18"", //Bacs Server
+        ""10.10.150.37"", //Fruadstar Server
+        ""10.10.150.100"", // ESX Server
+        ""10.10.150.89"", // VEAM Proxy
+        ""10.10.150.99"", // Trend
+        ""10.10.150.10"", // Trend
+        ""10.10.200.50"", // Franking Machine
+        ""10.10.200.51"", // Franking Machine
+        ""10.10.150.60"", // SCCM Servers
+        ""10.10.150.5"", // DCC
+        ""10.10.150.4"", // DCC 2k19
+        ""10.10.150.11"", // File Server 02
+        ""192.168.40.*"",
+        ""192.168.9.*"", // NTP Subnet
+        ""192.168.7.*"", // NTP Subnet
+        ""10.10.190.*"", // VXRail
+        ""255.255.255.255""
+    )
+    NOT All_Traffic.dvc IN (
+        ""10.60.10.252"", ""10.60.10.253"", ""10.60.73.252"", ""10.60.73.253"", 
+        ""172.18.248.123"", ""172.18.248.125""
+    ) 
+    NOT All_Traffic.Action IN (""Detect"", ""Prevent"", ""Drop"")
+BY All_Traffic.src_ip, All_Traffic.dest_port, All_Traffic.direction, All_Traffic.dest_ip, All_Traffic.action, All_Traffic.dest_translated_ip
+| rename All_Traffic.* AS * 
+| sort - count
+| lookup MySubnets subnet as src_ip OUTPUT location as src_location 
+| lookup MySubnets subnet as dest_ip OUTPUT location as dest_location
+| lookup MySubnets subnet as dest_translated_ip OUTPUT location as final_location
+| rename src_ip AS ""Source IP"", dest_ip AS ""Destination IP"", dest_port AS Port, direction AS ""FW Determined Direction""
+| fields ""Source IP"", src_location, ""Destination IP"", dest_location, Port, dest_translated_ip, final_location, Action, count"
+"Search checking for connections to ad sites (Domain, over 30 days)",,Always,24h,"index=prod_checkpoint (dest=""34.231.131.84"" OR dest=""52.87.34.65"" OR dest=""52.41.141.111"" OR dest=""35.164.24.169"" OR dest=""54.149.89.229"" OR dest=""54.191.252.124"" OR dest=""52.10.53.42"" OR dest=""52.26.163.52"" OR dest=""104.27.169.191"" OR dest=""104.27.168.191"" OR dest=""45.82.253.244"" OR dest=""104.206.78.18"") 
+| table _time, host, action, conn_direction, dest, hostname, service 
+| sort -_time"
+"Search checking for connections to ad sites (IP, over 30 days)",,Always,24h,"index=prod_checkpoint (dest=""34.231.131.84"" OR dest=""52.87.34.65"" OR dest=""52.41.141.111"" OR dest=""35.164.24.169"" OR dest=""54.149.89.229"" OR dest=""54.191.252.124"" OR dest=""52.10.53.42"" OR dest=""52.26.163.52"" OR dest=""104.27.169.191"" OR dest=""104.27.168.191"" OR dest=""45.82.253.244"" OR dest=""104.206.78.18"")
+| table _time host action conn_direction dest hostname service
+| sort -_time"
+Search checking for signs of the malware (over 30 days),,Always,24h,"index=*
+(""33094acd614825a916b77df6c5141c088fc3768b"" OR
+""0f4d63961b5f0f85bdf17d7858ab76f4b12173f8af25a3c1c8d84d75bb46d384"" OR
+""1b2fe4717cab6010c54d1132c789ab092a0f159733367f57d47a8673090e13e3"" OR
+""31f86819ef41477c18e700a75450fb5fc733636f83f92cbf06e6bcfcfd7e39c3"" OR
+""4685d1ea51450e291b46a4fb64b549ac423a41bdfe03f1a536c031a90ef05499"" OR
+""60f240809b1d3c205a585b2386dcc4a0c6ec63e6038ab122af905e3b9bd9637c"" OR
+""63d49ee2a609deacf15d4c5dd3c39b8678b1ef7d64704e6eda648e28ae97cf05"" OR
+""7d57f577f22e1b87a1f94876840c924f4335cfac06ccac2dff032db5db763798"" OR
+""9d3aab6a662b6f245e46a0548a7b7526fb7921c38f8f2da9fafae8cdae87dde1"" OR
+""a88b8339048897ad794f6ba051d714533eaf750ba45d93397e19280fb0187479"" OR
+""b56a75e8a431c78253ffca8adf967a33335ffd3413987fc129fb17dc81c3c866"" OR
+""b7305f7409d9518d57aad6c9baf04160566c1cc90a9c8284ab7f9fc1c2af116b"" OR
+""cea3c5d2afb1417c2e1435fa3035777c992f167532f9a5bc1203468993f025ed"" OR
+""d745e27c1892fda16bf37f0cfaeef9cd7e201754bc75abbbd5db534186ff1c57"" OR
+""db677e6fcdc8f80720323edd2c7e082ff64f805ec4e545b35c0dfaac370a7f9b"" OR
+""dd96cf4443ec8c0ddf8355f1845f5a8c3e252061041231e25bc6d829c3edd5b0"" OR
+""deeaf7d761dbb3d7434d378065161122296c07dfda1ad7a72fe2f364d90425db"" OR
+""def687be0a9af6454054f20bb0bcfb9d5c7361584a024584174b4776e051926f"" OR
+""dfc56347494ca778defdf4b68a70e20f8ce6b994819a9b5923a60e648de97f09"" OR
+"""
+Search for a process injection associated with Bazar malware (30 days),,Always,24h,"index IN (prod_checkpoint prod_cisco* prod_o365 prod_windows prod_sophos*) EventCode=4688 New_Process_Name IN (""*bash.exe"" ""*lxrun.exe"" ""*wsl.exe"")
+| fields src_user, user, category, New_Process_Name, app, signature, dest, index
+| stats earliest(_time) as earliest, latest(_time) as latest, count, values(category) as category, values(New_Process_Name) as New_Process_Name, values(app) as app, values(signature) as signature, values(index) as index by dest, user, src_user
+| eval earliest=strftime(earliest,""%Y-%m-%d %H%M%S.%Q"")
+| eval latest=strftime(latest,""%Y-%m-%d %H%M%S.%Q"")
+| table earliest, latest, count, src_user, user, New_Process_Name, dest, signature, category, app, index"
+Search for activity to IPS (30d),,Always,24h,"| tstats values(Web.user) AS user, values(Web.dest) AS dest, values(Web.http_method) AS method, 
+values(Web.url) AS url, values(Web.http_referrer) AS referrer, values(Web.http_user_agent) AS 
+userAgent, values(Web.category) AS category, values(Web.action) AS action 
+FROM datamodel=Web 
+WHERE Web.dest IN (
+    ""*f0525443.xsph.ru*"",
+    ""*f0525538.xsph.ru*"",
+    ""*f0526889.xsph.ru*"",
+    ""*f0528108.xsph.ru*"",
+    ""*f0528018.xsph.ru*"",
+    ""*f0528103.xsph.ru*"",
+    ""*f0527632.xsph.ru*"",
+    ""*f0527590.xsph.ru*"",
+    ""*f0527586.xsph.ru*"",
+    ""*f0527577.xsph.ru*"",
+    ""*f0527472.xsph.ru*"",
+    ""*f0527475.xsph.ru*"",
+    ""*f0527235.xsph.ru*"",
+    ""*f0526632.xsph.ru*"",
+    ""*f0526333.xsph.ru*"",
+    ""*f0525244.xsph.ru*"",
+    ""*f0525767.xsph.ru*"",
+    ""*f0525168.xsph.ru*"",
+    ""*f0525255.xsph.ru*"",
+    ""*f0525053.xsph.ru*""
+) 
+AND Web.url IN (
+    ""*f0525443.xsph.ru*"",
+    ""*f0525538.xsph.ru*"",
+    ""*f0526889.xsph.ru*"",
+    ""*f0528108.xsph.ru*"",
+    ""*f0528018.xsph.ru*"",
+    ""*f0528103.xsph.ru*"",
+    ""*f0527632.xsph.ru*"",
+    ""*f0527590.xsph.ru*"",
+    ""*f0527586.xsph.ru*"",
+    ""*f0527577.xsph.ru*"",
+    ""*f0527472.xsph.ru*"",
+    ""*f0527475.xsph.ru*"",
+    ""*f0527235.xsph.ru*"",
+    ""*f0526632.xsph.ru*"",
+    ""*f0526333.xsph.ru*"",
+    ""*f0525244.xsph.ru*"",
+    ""*f0525767.xsph.ru*"",
+    ""*f0525168.xsph.ru*"",
+    ""*f0525255.xsph.ru*"",
+    ""*f0525053.xsph.ru*""
+) 
+AND Web.http_referrer IN (*) 
+BY Web.url
+| fields user, dest, url, method, referrer, userAgent, category, action"
+Search for created and deleted scheduled tasks 30 days,,Always,24h,"index=prod_windows sourcetype=* (EventCode=4698 OR EventCode=4699) 
+| sort -_time 
+| transaction ComputerName startswith=(EventCode=4698) endswith=(EventCode=4699) maxspan=60m 
+| stats values(EventCode) as EventCode values(EventType) as Event values(TaskCategory) as Task_Name by ComputerName"
+Search for Domains,,Always,24h,"| tstats values(Web.user) AS user, values(Web.dest) AS dest, values(Web.http_method) AS method, 
+values(Web.url) AS url, values(Web.http_referrer) AS referrer, values(Web.http_user_agent) AS 
+userAgent, values(Web.category) AS category, values(Web.action) AS action FROM datamodel=Web 
+WHERE Web.dest IN (*ddjm.co.kr/bbs/icon/skin/skin.php*, *hivekorea.com/jdboard/member/list.php*, 
+*mail.namusoft.kr/jsp/user/eam/board.jsp*, *mail.sisnet.co.kr/jsp/user/sms/sms_recv.jsp*, 
+*snum.or.kr/skin_img/skin.php*, *allamwith.com/home/mobile/list.php*, 
+*conkorea.com/cshop/banner/list.php*, *ddjm.co.kr/bbs/icon/skin/skin.php*, 
+*jinjinpig.co.kr/Anyboard/skin/board.php*) AND Web.url IN (*) AND Web.http_referrer IN (*) 
+BY Web.url | fields user, dest, url, method, referrer, userAgent, category, action"
+Search for domains 30 days,,Always,24h,"| tstats min(_time) as Time values(Web.user) AS user, values(Web.dest) AS dest, 
+values(Web.http_method) AS method, values(Web.url) AS url, values(Web.http_referrer) AS referrer, 
+values(Web.http_user_agent) AS userAgent, values(Web.category) AS category, values(Web.action) AS 
+action FROM datamodel=Web WHERE Web.dest IN (""*new.www1.biz*"", ""*smasters.otzo.com*"", 
+""*sriggggs.dynamic-dns.net*"", ""*punisher.shacknet.us*"", ""*italidiegwu12.duckdns.org*"", ""*jbfrost.live*"", 
+""*nectarclampplaza.com*"", ""*str-master.pw*"") AND Web.url IN (""*"") AND Web.http_referrer IN (""*"") 
+BY Web.url 
+| fields Time, user, dest, url, method, referrer, userAgent, category, action 
+| convert ctime(Time)"
+Search for evidence of PowerShell PrintNightmare module (30 days),,Always,24h,"index IN (test_windows, prod_windows) source=""WinEventLog*"" (EventCode=4688 OR EventCode=592) AND 
+((""*Invoke-Nightmare*"") OR (""*-DLL*"" AND ""*.dll"") OR (""*-DriverName*"" AND ""*-NewUser*""))"
+Search for evidence of Rundll32.exe PrintNightmare module (30 days),,Always,24h,"index IN (test_windows, prod_windows) source=WinEventLog* (EventCode=4688 OR EventCode=592) New_Process_Name=*rundll32.exe Creator_Process_Name=*spoolsv.exe"
+Search for Hashes,,Always,24h,index=prod_windows OR index=prod_sophos_onprem sourcetype=WinEventLog ed9aa858ba2c4671ca373496a4dd05d4 OR 71759cca8c700646b4976b19b9abd6fe OR 3ba4c71c6b087e6d06d668bb22a5b59a OR d5e974a3386fc99d2932756ca165a451 OR f4d46629ca15313b94992f3798718df7 OR 118cfa75e386ed45bec297f8865de671 OR 53648bf8f0121130edb42c626d7c2fc4 OR 1bb267c96ec2925f6ae3716d831671cf OR 0812ce08a75e5fc774a114436e88cd06 OR 927f0a1090255bc724953e1f5a09a070 OR 145735911e9c8bafa4c9c1d7397199fc OR 551c5b3595e9fc1081b5e1f10e3c1a59 OR f3fcb306cb93489f999e00a7ef63536b OR 0ecfa51cd4bf1a9841a07bdb5bfcd0ab OR 4d30612a928faf7643b14bd85d8433cc OR df1e7a42c92ecb01290d896dca4e5faa OR 3b1b8702c4d3e2e194c4cc8f09a57d06 OR ef3a6978c7d454f9f6316f2d267f108d OR 33c2e887c3d337eeffbbd8745bfdfc8f OR bf4a822f04193b953689e277a9e1f4f1 OR 6e710f6f02fdde1e4adf06935a296fd8 OR 38917e8aa02b58b09401383115ab549e OR 67220baf2a415876bee2d43c11f6e9ad OR 3bf9b83e00544ac383aaef795e3ded78 OR 159ad2afcab80e83397388e495d215a5 OR 21ec5f03aab696f0a239c6ea5e50c014 OR b5874eb1119327be51ae03adcbf4d3e0 OR 8b378eabcec13c3c925cc7ca4d191f5f OR 5b387a9130e9b9782ca4c225c8e641b3 OR 25c8e057864126e6648c34581e7b4f20 OR 62eae43a36cbc4ed935d8df007f5650b OR 8d74112c97e98fef4c5d77200f34e4f2 OR b5648f5e115da778615dfd0dc772b647 OR eef723ff0b5c0b10d391955250f781b3 OR d1a99087fa3793fbc4d0adb26e87efce OR d63bb2c5cd4cfbe8fabf1640b569
+Search for IPS 30 days,,Always,24h,"index=prod_checkpoint OR index=prod_cisco_asa OR index=prod_cisco_ise (198.54.117.200 OR 198.54.117.198 OR 198.54.117.199 OR 198.54.117.197 OR 104.193.252.197 OR 162.244.81.253 OR 185.180.197.86 OR 81.91.177.54 OR 185.117.119.87) 
+| table category sourcetype index url user cs_host c_ip time date action dest dvc site"
+Search for lateral movement Indicators with ConDrv (30d),,Always,24h,"| tstats summariesonly=t earliest(_time) as Earliest latest(_time) as Latest 
+  values(Web.user) as User values(Web.dest) as Destination 
+  values(Web.site) as Site values(Web.action) as Action 
+  values(Web.category) as Category values(Web.url) as URL 
+  values(Web.http_content_type) as ""HTTP Content Type"" 
+  values(Web.http_method) as ""HTTP Method"" 
+  values(Web.http_referrer) as ""HTTP Referrer"" 
+  values(Web.http_user_agent) as ""User Agent"" 
+  from datamodel=Web 
+  WHERE Web.dest IN (""95.179.242.6"", ""95.179.242.27"", ""199.247.25.102"", ""95.179.210.61"", ""95.179.156.97"") 
+  by Web.src 
+| `drop_dm_object_name(Web)` 
+| convert ctime(Earliest) ctime(Latest) timeformat=""%d/%m/%Y %H%M%S"" 
+| sort -Earliest"
+Search for malicious domain ( 7 days),,Always,24h,"index=prod_workday_live url IN(
+    ""*albanallahacrab.club*"",
+    ""*dclogictrust.com*"",
+    ""*masskwearing.cyou*"",
+    ""*padishahmurrka.best*"",
+    ""*uragusexgre.club*""
+)
+| table category, sourcetype, index, url, user, cs_host, c_ip, time, date, action"
+Search for malicious domains,,Always,24h,"index IN (prod_censornet, prod_checkpoint, prod_mimecast, prod_rapid7, prod_squid_proxy, test_windows_iis) 
+AND (""*dimentos.com*"" OR ""*vaclicinni.xyz*"" OR ""*thulleultinn.club*"" OR ""*oxythuler.cyou*"" OR ""*dictorecovery.cyou*"" OR ""*expertulthima.club*"")"
+Search for malicious files,,Always,24h,"index IN (prod_aws, prod_checkpoint, prod_cisco_asa, prod_f5, prod_kong, prod_mimecast, prod_netscaler, prod_o365, prod_rapid7, prod_servicenow, prod_slack, prod_squid_proxy, prod_windows, test_windows_iis) sourcetype=""CONTI_README.txt""
+| table category, sourcetype, index, url, user, cs_host, c_ip, time, date, action, dest, dvc, site"
+Search for malicious files 7 days,,Always,24h,"index IN (prod_windows, prod_sophos_onprem) 
+(""*locker_64.dll*"" OR 
+""*RecoveryManual.html*"" OR 
+""*wininit64.dll*"") 
+| table category, sourcetype, index, url, user, cs_host, c_ip, time, date, action, dest, dvc, site"
+Search for malicious hashes (30 days),,Always,24h,"index=prod_windows sourcetype=WinEventLog 
+OR 
+index=prod_sophos_onprem sourcetype=WinEventLog 
+(""0a671d9d7ca62274e5e210813d02d860846baf59188e2a07522cd3a1cc3f9cc0"" 
+OR ""2c44444d207a78da7477ae1af195d4265134e895bebb476f7b2c003f1467a033"")"
+Search for malicious IP addresses,,Always,24h,"index IN (prod_checkpoint, prod_cisco_asa, prod_cisco_ise) 
+(""68.183.20.194"" OR ""159.89.140.116"" OR ""83.97.20.160"" OR ""192.99.178.145"" OR ""38.135.122.194"") 
+| table category, sourcetype, index, url, user, cs_host, c_ip, time, date, action, dest, dvc, site"
+Search for malicious 'logon with explicit credentials' events,,Always,24h,"index=prod_windows OR index=prod_windows_ad OR index=prod_aws EventCode=4648 src_user!=SYSTEM src_user!=""*$*"" 
+| where src_user!=Account_Name 
+| convert ctime(_time) as Time timeformat=""%d/%m/%y %H%M%S"" 
+| stats values(Time) values(src_user) values(EventCode) values(action) values(user) values(Process_Name) values(Additional_Information) values(Account_Name) values(Security_ID) by ComputerName"
+Search for net use 'logon with explicit credentials' events,,Always,24h,"(index=prod_windows OR index=prod_windows_ad OR index=prod_aws) EventCode=4648 Process_ID=0x4 src_user!=SYSTEM 
+| where src_user!=Account_Name 
+| convert ctime(_time) as Time timeformat=""%d/%m/%y %H%M%S"" 
+| stats values(Time) values(src_user) values(EventCode) values(action) values(user) values(Process_Name) 
+  values(Additional_Information) values(Account_Name) values(Security_ID) by ComputerName"
+Search for presence of suspicious hashes in the estate (30 days),,Always,24h,"index=prod_windows OR index=prod_sophos_onprem sourcetype=WinEventLog 
+(B935689B73080CBB9E705E0E598554D1551803E405607CEEABAFE763AA6F9977 
+OR 73CF0383A1DC61D851478D5C12408F19A426DD6DA3B347135D0D02A30B4E7545 
+OR 9EA73CAC6A19E97458C24AA41D11D0A259EC9E374F58C5861FCA83F2984EC9FA 
+OR 80C6688BEE8ED522D3045F46729803A9925857C0AC6B0A4CC2EE552820014197 
+OR 7376C43230CE320552C655C6A1CDAD03A4A65395F241A763758BF8F13375474B 
+OR 99875E7786B803B50675D3FDE7B3B297EB0291582A71D07FDE68A6F4B1E66C4E 
+OR CD6D89DEB28453839DFFCBD5F95EA988DD1845F763FD6ABD33FC62189ECAB339 
+OR 3279E4790191B9C9306B8C6870D6E6D4D1990F33B6B1B1E44876F32D9FAD83FA 
+OR 453005576C7EDBFDFBD0E0B96D3ACABA53FCDAB6B0DDA0F18375EA898BDBBFD4 
+OR 2F1AF29DF7E0104B363D1D5F905FD978ECA948151D55334753E1540F6217AC95 
+OR 824D880A5331A14827C549B6277E57DBDF55CBBCF63EA6F9EE47C788258CD313 
+OR B6C563486ADE09FBE672D8ACB34736FEE2B36D217DF5EA1D4E3C6BF07DC375C4 
+OR DDB32192DB103ECF44FDBE3E0CF4DA8D61853BD90B46EC3721B6760EDEC8FBEB 
+OR 3F9A83AFB95B22057FE64588AF8CC3A4F463615DEDFB56F4077FA8BBD7607A9F 
+OR FFB99BB263054241D6D3C9330EA911A3B596B3F0D1146CD5C09DF2652A3A8DA8 
+OR 35296AA729A0A7FFB94E8141EF9DE20315F88412D1C68DBB81FBAE5FA871F914 
+OR 515FEDD3B73D5E818BF55CB918C9788E1F89B4E8C185A90DCB5B66B38C87C17F 
+OR 860388A45EED8C7BAEB4CF3B3AF742222E060DA5723A7E6724D5B6B22F43C697 
+OR C063D617F9DBBB3A995"
+Search for PSexec or WMI IoC (30d),,Always,24h,"index IN (prod_checkpoint prod_cisco* prod_o365 prod_windows prod_sophos*) EventCode=1121 
+    AND (Process_Name IN (""*\\wmiprvse.exe"" ""*\\psexesvc.exe"") 
+        OR New_Process_Name IN (""*\\wmiprvse.exe"" ""*\\psexesvc.exe"") 
+        OR process_name IN (""*\\wmiprvse.exe"" ""*\\psexesvc.exe"") 
+        OR new_process_name IN (""*\\wmiprvse.exe"" ""*\\psexesvc.exe""))
+| convert ctime(_time) as Time timeformat=""%d/%m/%y %H%M%S""
+| stats earliest(Time) as ""Earliest"" latest(Time) as ""Latest"" values(user) as User 
+    values(EventCode) as EventCode values(Message) as Message by host"
+Search for RDP connections over reverse SSH tunnel (using Event ID 4624),,Always,24h,"(index=prod_windows OR index=prod_windows_ad OR index=prod_aws) EventCode=4624 Logon_Type=10 (Source_Network_Address=127.0.0.1/8 OR Source_Network_Address=1)
+| convert ctime(_time) as Time timeformat=""%d/%m/%y %H%M%S""
+| stats values(src_port) values(Time) values(ComputerName) values(user) values(Account_Name) values(action) values(subject) by src_ip"
+Search for RDP connections over reverse SSH tunnel (utilising Event ID 5156),,Always,24h,"(index=prod_windows OR index=prod_windows_ad OR index=prod_aws) EventCode=5156 (src_port=3389 OR Client_Port=3389 OR Port=3389 OR dest_port=3389) (src_ip=127.0.0.1/8 OR dest_ip=127.0.0.1/8)
+| convert ctime(_time) as Time timeformat=""%d/%m/%y %H%M%S""
+| stats values(src_port) values(Time) values(ComputerName) values(user) values(Account_Name) values(action) values(subject) by src_ip"
+Search for RDP with local account (connections to loopback address),,Always,24h,"(index=prod_windows OR index=prod_windows_ad OR index=prod_aws) EventCode=4624 Logon_Type=10 
+(Source_Network_Address=127.0.0.1 OR Source_Network_Address=1)
+| replace ""*$"" with ""*"" IN Account_Name
+| where Account_Name=Workstation_Name
+| convert ctime(_time) as Time timeformat=""%d/%m/%y %H%M%S""
+| stats values(src_port) values(Time) values(ComputerName) values(user) values(Account_Name) values(action) by src_ip"
+Search for relevant event codes for indication of exploitation,,Always,24h,"index IN (test_windows, prod_windows) source=""WinEventLog*"" 
+(EventCode=4688 OR EventCode=592) AND (""*spoolsv.exe*"" OR ""*\\AppCrash_spoolsv.exe_*"")"
+Search for remote service Interaction (utilising 'sc.exe' with explicit credentials),,Always,24h,"(index=prod_windows OR index=prod_windows_ad OR index=prod_aws) EventCode=4648 Process_Name=""*sc.exe""
+| convert ctime(_time) as Time timeformat=""%d/%m/%y %H%M%S""
+| stats values(Time) values(src_user) values(EventCode) values(action) values(user) values(Process_Name) values(Additional_Information) values(Account_Name) values(Security_ID) by ComputerName"
+Search for remote task creation,,Always,24h,"(index=prod_windows OR index=prod_windows_ad OR index=prod_aws) (EventCode=4624 EventType=3 OR EventCode=4698) 
+| sort -_time 
+| transaction Logon_ID startswith=(EventCode=4624) endswith=(EventCode=4698) maxspan=1m 
+| stats values(EventCode) values(Task_Name) values(Message) values(user) by ComputerName"
+Search for suspicious domains,,Always,24h,"| tstats values(Web.user) AS user, values(Web.dest) AS dest, values(Web.http_method) AS method, 
+  values(Web.url) AS url, values(Web.http_referrer) AS referrer, values(Web.http_user_agent) AS userAgent, 
+  values(Web.category) AS category, values(Web.action) AS action 
+  FROM datamodel=Web 
+  WHERE Web.dest IN (*) 
+    AND Web.url IN (""*py2web.online*"", ""*py2web.store*"", ""*mr.f2pool.com*"", ""*pool.minexmr.com*"", 
+                   ""*xmr-eu1.nanopool.org*"", ""*xmr.f2pool.com*"", ""*xmr.pool.gntl.co.uk*"", 
+                   ""185.239.242.71*"", ""194.145.227.21*"", ""194.145.227.21/a.py*"", ""194.145.227.21/ldr.ps1*"", 
+                   ""194.145.227.21/ldr.sh*"", ""194.40.243.98/ldr.sh*"", ""194.87.139.103/cleanfda/newinit.sh*"", 
+                   ""194.87.139.103/cleanfda/zzh*"", ""195.58.39.46/asap*"", ""195.58.39.46/cleanfda/init.sh*"", 
+                   ""195.58.39.46/cleanfda/newinit.sh*"", ""195.58.39.46/cleanfda/zzh*"", ""31.210.20.120/ldr.sh*"", 
+                   ""31.210.20.181/ldr.sh*"", ""45.145.185.85*"", ""py2web.store/cleanfda/newinit.sh*"", 
+                   ""py2web.store/cleanfda/zzh*"") 
+    AND Web.http_referrer IN (*) 
+  BY Web.url 
+| fields user, dest, url, method, referrer, userAgent, category, action"
+Search for suspicious IP addresses,,Always,24h,"| tstats summariesonly=t count min(_time) as firstTime max(_time) as lastTime 
+  values(All_Traffic.src_ip) as src_ip  
+  values(All_Traffic.dvc) as dvc 
+  values(All_Traffic.protocol) as protocol 
+  values(All_Traffic.src_zone) as src_zone 
+  values(All_Traffic.user) as user 
+  from datamodel=Network_Traffic 
+  where All_Traffic.dest_ip IN (""139.99.102.72"", ""185.239.242.71"", ""194.145.227.21"", ""194.40.243.98"", ""194.87.139.103"", ""195.58.39.46"", ""31.210.20.120"", ""31.210.20.181"", ""45.145.185.85"") 
+  by All_Traffic.dest_ip, All_Traffic.action, All_Traffic.app
+| convert ctime(lastTime) as lastTime, ctime(firstTime) as firstTime timeformat=""%Y/%m/%d %H%M"""
+Search for tasks with short life time,,Always,24h,"(index=prod_windows OR index=prod_windows_ad OR index=prod_aws) EventCode=4698 OR EventCode=4699
+| sort -_time
+| transaction Logon_ID Task_Name startswith=(EventCode=4698) endswith=(EventCode=4699) maxspan=1m
+| stats values(EventCode) values(Task_Name) values(Message) values(user) by ComputerName"
+Search for Windows Pcap Drivers (30d),,Always,24h,"index=prod_checkpoint OR index=prod_cisco* OR index=prod_o365 OR index=prod_windows OR index=prod_sophos* EventCode=4697 (""*pcap*"" OR ""*npcap*"" OR ""*npf*"" OR ""*nm3*"" OR ""*ndiscap*"" OR ""*nmnt*"" OR ""*windivert*"" OR ""*USBPcap*"" OR ""*pktmon*"")"
+Search for WMI filter to consumer binding or WMI suspicious event consumers(30d),,Always,24h,"index=prod_* (EventCode=5861 AND Message IN (*ActiveScriptEventConsumer* *CommandLineEventConsumer* *CommandLineTemplate*)) OR EventCode=5859 
+| transaction user,dvc,service maxspan=-1 maxevents=-1 
+| convert ctime(_time) as Time timeformat=""%d/%m/%y %H%M%S"" 
+| stats earliest(Time) as Earliest latest(Time) as Latest values(EventCode) as EventCode values(eventtype) as EventType values(service) as Service values(dvc) as Host values(status) as Status values(Service_Type) as Service_Type values(Message) as Message by user"
+Search for WMI subscription(30d),,Always,24h,"index IN (prod_checkpoint prod_cisco* prod_o365 prod_windows prod_sophos*) EventCode=4662 Object_Type=""WMI Namespace"" Object_Name=*subscription*
+| transaction user,dvc maxspan=-1 maxevents=-1
+| convert ctime(_time) as Time timeformat=""%d/%m/%y %H%M%S""
+| stats earliest(Time) as Earliest latest(Time) as Latest values(EventCode) as EventCode values(eventtype) as EventType values(Object_Type) as Object_Type values(dvc) as Host values(Object_Name) as Object_Name values(Message) as Message by user"
+Search to detect creation of ATSVC scheduled tasks,,Always,24h,"(index=prod_windows OR index=prod_windows_ad OR index=prod_aws) EventCode=""5145"" ""*IPC$*"" ""*atsvc*"" Accesses=""*Write*"""
+Search to detect lateral movement using GPO scheduled tasks,,Always,24h,"(index=prod_windows OR index=prod_windows_ad OR index=prod_aws) (EventCode=""5145"" ""*SYSVOL*"" 
+""*Scheduled*"" Accesses=""*Write*"")"
+Search to find malicious hashes 30 days,,Always,24h,index=prod_windows OR index=prod_sophos_onprem sourcetype=WinEventLog (243dff06fc80a049f4fb37292f8b8def0fce29768f345c88ee10699e22b0ae60 OR 12ee27f56ec8a2a3eb2fe69179be3f7a7193ce2b92963ad33356ed299f7ed975 OR 9cee5522a7ca2bfca7cd3d9daba23e9a30deb6205f56c12045839075f7627297 OR 5860f2415aa9a30c045099e3071f099313f653ae1806d6bcdb5f47d5da96c6d7 OR 78782fd324bc98a57274bd3fff8f756217c011484ebf6b614060115a699ee134 OR dc4b8dfff72ff08ec4daa8db4c096a350a9a1bf5434ba7796ab10ec1322ac38c OR 8cfd28911878af048fb96b6cc0b9da770542576d5c2b20b193c3cfc4bde4d3bc OR 4edb883d1ac97824ee42d9f92917cc84b52995abcd17b2852a7e3d5bb567ffbe OR e9417cb1baec2826e3f5a6f64ade26c1374d74d8aa41bfabd29ea20ea5894b14 OR fb76b4a667c6d790c39fcc93a3aac8cd2a224f0eb9ece4ecfd7825f606c2a8b6 OR 4d9432e8a0ceb64c34b13d550251b8d9478ca784e50105dc0d729490fb861d1a OR 508dd6f7ed6c143cf5e1ed6a4051dd8ee7b5bf4b7f55e0704d21ba785f2d5add OR cc54647e8c3fe7b701d78a6fa072c52641ac11d395a6d2ffaf05f38f53112556 OR 68872cc22fbdf0c2f69c32ac878ba9a7b7cf61fe5dd0e3da200131b8b23438e7 OR 1ef8db7e8bd3aaba8b1cef96cd52fde587871571b1719c5d40f9a9c98dd26f84 OR 43e61519be440115eeaa3738a0e4aa4bb3c8ac5f9bdfce1a896db17a374eb8aa OR ec153c3cb67f742b12a35a498d93cd80f47b19ea7b7eb0de217139f136ea0073 OR 533672da9d276012ebab3ce9f4cd09a7f537f65c6e4b63d43f0c1697e2f5e48d OR 1cc7c198a8a2c935fd6f07970479e544f5b35a8eb
+Search to identify hashes(90d),,Always,24h,"index IN (prod_windows, prod_sophos_onprem) AND 
+    (d0d626deb3f9484e649294a8dfa814c5568f846d5aa02d4cdad5d041a29d5600 OR 
+    53f8dfc65169ccda021b72a62e0c22a4db7c4077f002fa742717d41b3c40f2c7 OR 
+    32519b85c0b422e4656de6e6c41878e95fd95026267daab4215ee59c107d6c77 OR 
+    abe22cf0d78836c3ea072daeaf4c5eeaf9c29b6feb597741651979fc8fbd2417 OR 
+    019085a76ba7126fff22770d71bd901c325fc68ac55aa743327984e89f4b0134 OR 
+    ce77d116a074dab7a22a0fd4f2c1ab475f16eec42e1ded3c0b0aa8211fe858d6 OR 
+    439bcd0a17d53837bc29fb51c0abd9d52a747227f97133f8ad794d9cc0ef191e OR 
+    a25cadd48d70f6ea0c4a241d99c5241269e6faccb4054e62d16784640f8e53bc OR 
+    d3c6785e18fba3749fb785bc313cf8346182f532c59172b69adfb31b96a5d0af OR 
+    292327e5c94afa352cc5a02ca273df543f2020d0e76368ff96c84f4e90778712 OR 
+    c15abaf51e78ca56c0376522d699c978217bf041a3bd3c71d09193efa5717c71 OR 
+    1b476f58ca366b54f34d714ffce3fd73cc30db1a OR 
+    47d92d49e6f7f296260da1af355f941eb25360c4 OR 
+    76640508b1e7759e548771a5359eaed353bf1eec OR 
+    b485953ed77caefe81bff0d9b349a33c5cea4cde OR 
+    2f1a5a7411d015d01aaee4535835400191645023 OR 
+    d130bd75645c2433f88ac03e73395fba172ef676 OR 
+    cfc57d48effb5bbd4e0a6f80e6041d9faf7d7ab4 OR 
+    5e643654179e8b4cfe1d3c1906a90a4c8d611cea OR 
+    ebe711516d0f5cd8126f4d53e375c90b7b95e8f2 OR 
+    c2c30b3a287d82f88753c85cfb11ec9eb1466bad OR 
+    75af292f34789a1c782ea36c7127bf6106f595e8 OR 
+    02af7cec58b9a5"
+Search to view activity to IOC domains,,Always,24h,"| tstats values(Web.user) AS user, values(Web.dest) AS dest, values(Web.http_method) AS method, 
+values(Web.url) AS url, values(Web.http_referrer) AS referrer, values(Web.http_user_agent) AS 
+userAgent, values(Web.category) AS category, values(Web.action) AS action 
+FROM datamodel=Web 
+WHERE Web.dest IN (*) AND Web.url IN (""*gdcb.bit*"",""*corp-servers.ru*"",""*politiaromana.bit*"",
+""*aurumwedding.ru*"",""*krasnaypolyana123.ru*"",""*goodapd.website*"",""*blokefeed.club*"",
+""*cevent.net*"",""*graftedinn.us*"",""*top-22.ru*"",""*fabbfoundation.gm*"",""*hoteltravel2018.com*"",
+""*boatshowradio.com*"",""*corp-server.ru*"",""*cloud-name.ru*"",""*virmach.ru*"",""*fullmanaged.ru*"",
+""*bellytobabyphotographyseattle.com*"",""*pp-panda74.ru*"",""*virmach.ru*"",""*wowservers.ru*"",
+""*perfectfunnelblueprint.com*"",""*poketeg.com*"",""*fliptray.biz*"",""*wowservers.ru*"",
+""*dsoprodns.ru*"",""*bizaziniinfissi.com*"",""*aubergemontblanc.com*"",""*hotelweisshorn.com*"",
+""*holzbock.biz*"",""*morcote-residenza.com*"")
+AND Web.http_referrer IN (*) 
+BY Web.url 
+| fields user, dest, url, method, referrer, userAgent, category, action"
+Search to view activity to malicious domains,,Always,24h,"| tstats min(_time) as Time values(Web.user) as user, values(Web.dest) as dest, 
+  values(Web.http_method) as method, values(Web.url) as url, values(Web.http_referrer) as referrer, 
+  values(Web.http_user_agent) as userAgent, values(Web.category) as category, values(Web.action) as action 
+  FROM datamodel=Web 
+  WHERE Web.dest IN (""*australiatourism.bazar*"", ""*bestsightsofwildaustralia.bazar*"", 
+                     ""*restinaustraliaplace.bazar*"", ""*sightsofsydney21.bazar*"", ""*sydneynewtours.bazar*"", 
+                     ""*vacationinsydney2021.bazar*"") 
+    AND Web.url IN (""*australiatourism.bazar*"", ""*bestsightsofwildaustralia.bazar*"", 
+                    ""*restinaustraliaplace.bazar*"", ""*sightsofsydney21.bazar*"", ""*sydneynewtours.bazar*"", 
+                    ""*vacationinsydney2021.bazar*"") 
+    AND Web.http_referrer IN (""*"") 
+  BY Web.url
+| fields Time, user, dest, url, method, referrer, userAgent, category, action 
+| convert ctime(Time)"
+Search to view evidence of executables over the last 30 days,,Always,24h,"index=prod_checkpoint OR index=prod_cisco* OR index=prod_o365 OR index=prod_windows OR index=prod_sophos* EventCode=4688 New_Process_Name IN (""*bash.exe"" ""*lxrun.exe"" ""*wsl.exe"") 
+| fields src_user, user, category, New_Process_Name, app, signature, dest, index 
+| stats earliest(_time) as earliest, latest(_time) as latest, count, values(category) as category, 
+values(New_Process_Name) as New_Process_Name, values(app) as app, values(signature) as signature, 
+values(index) as index by dest, user, src_user 
+| eval earliest=strftime(earliest,""%Y-%m-%d %H%M%S.%Q"") 
+| eval latest=strftime(latest,""%Y-%m-%d %H%M%S.%Q"") 
+| table earliest, latest, count, src_user, user, New_Process_Name, dest, signature, category, app, index"
+Search to view presence of malicious file hashes,,Always,24h,"index=prod_windows sourcetype=WinEventLog OR index=prod_sophos_onprem sourcetype=WinEventLog 
+EventCode IN (""21807bf30699429100f07c674e9f52f0"", ""441a9b57a778665b0689986265a59caf"", ""494e8dc63210ed59ab012ebb5be1a283"", ""c941c4a83663fa976cf0367844900bc6"", ""c9ea53bdb7010f189f3c4566a854c543"")"
+Search to view spoolsv.exe errors associated with PrintNightmare exploit (30 Days),,Always,24h,"index IN (test_windows, prod_windows) source=""WinEventLog*"" ((ErrorCode=""0x45A"" AND (EventCode=""808"" OR EventCode=""4909""))
+OR (""The print spooler failed to load a plug-in module"" OR ""*\\drivers\\x64\\*"")) AND ""*mimispool*"""
+Search to view uploads to known Paste Sites over the last 30 days,,Always,24h,"| tstats min(_time) as earliest max(_time) as latest values(Web.src) as src sum(Web.bytes) as bytes 
+sum(Web.bytes_in) as bytes_in sum(Web.bytes_out) as bytes_out values(Web.http_user_agent) as 
+http_user_agent values(Web.uri_path) as uri_path values(Web.url) as url values(Web.site) as dest
+FROM datamodel=Web WHERE (Web.url IN 
+(""*paste.ee/r/*"",""*pastebin.com/raw/*"",""*hastebin.com/raw/*"",""*ghostbin.co/paste/*/raw/*"",""*controlc
+.com*"",""*rentry.co/*"", ""*pastehouse.com*"", ""*pastebin.pl*"", ""*justpaste.it*"", ""*pastelink.net*"", 
+""*anotepad.com*"", ""*pastequick.com*"", ""*penyacom.org*"", ""*pastebin.pt*"", ""*pastebin.es*"", 
+""*pastebin.cz*"", ""*pastebin.in*"", ""*pastebin.ro*"", ""*pastebin.co.za*"", ""*xup.in./paste/*"", 
+""*pastr.io*"", ""*0bin.net*"", ""*write.as*"", ""*privatebin.net*"", ""*ideone.com*"", ""*throwbin.io*"", 
+""*anonpaste.org*"", ""*secretpm.co*"",""*tempmessage.xyc*"",""*notes.io*"",""*notexe.com*"", ""*zerobin.net*"", 
+""*0bin.net*"", ""*privatebin.info*"", ""*pastefs.com*"", ""*pastie.org*"", 
+""*dpaste.com*"",""*paste2.org*"",""*codepad.org*"") OR Web.uri_path IN 
+(""*paste.ee/r/*"",""*pastebin.com/raw/*"",""*hastebin.com/raw/*"",""*ghostbin.co/paste/*/raw/*"",""*controlc
+.com*"",""*rentry.co/*"", ""*pastehouse.com*"", ""*pastebin.pl*"", ""*justpaste.it*"", ""*pastelink.net*"", 
+""*anotepad.com*"", ""*pastequick.com*"", ""*penyacom.org*"", ""*pastebin.pt*"", ""*pastebin.es*"", 
+""*pastebin.cz*"", ""*pastebin.in*"", ""*pastebin.ro*"", ""*pastebin.co.za*"", ""*xup.in./paste/*"", 
+""*pastr.io*"", ""*0bin.net*"", ""*write.as*"", ""*privatebin.net*"", ""*ideone.com*"", ""*throwbin.io*"", 
+""*anonpaste.org*"", ""*secretpm.co*"",""*tempmessage.xyc*"",""*notes.io*"",""*notexe.com*"", ""*zerobin.net*"", 
+""*0bin.net*"", ""*privatebin.info*"", ""*pastefs.com*"", ""*pastie.org*"", 
+""*dpaste.com*"",""*paste2.org*"",""*codepad.org*"")) BY Web.app, Web.action, Web.user
+| rename Web.* as *
+| eval kbytes_out=(bytes_out/1024), kbytes_in=(bytes_in/1024), kbytes_total=(bytes/1024)
+| convert timeformat=""%d/%m/%Y %H%M%S"" ctime(earliest) ctime(latest)
+| sort 0 - earliest
+| table earliest, latest, app, action, user, src, dest, kbytes_total, kbytes_in, kbytes_out, url, uri_path, http_user_agent"
+util_LookupUpdater-SPL01,This is used to update the lookup for MFA logins.,Always,24h,"index=prod_aws eventName=""ConsoleLogin"" additionalEventData.MFAUsed=""No"" action=success earliest=-65m@m latest=-5m@m
+| rename userIdentity.userName AS user
+| stats min(_time) AS earliestLogin BY user
+| table user, earliestLogin
+| appendcols [| inputlookup BL_MFAUserLogins.csv | fields user earliestLogin]
+| outputlookup BL_MFAUserLogins.csv"
