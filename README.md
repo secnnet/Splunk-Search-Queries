@@ -7,5 +7,3 @@ And the best part is that you have the freedom to change and amend these search 
 Oh, and just a heads up, I'll occasionally update the spreadsheet and include a version number. So make sure to keep an eye out for any updates!
 
 Hope you find this helpful and have a great day! 🤗
-
-https://www.buymeacoffee.com/iBill3l
