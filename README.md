@@ -1,9 +1,11 @@
-Hey there! 👋🏼
+Hello,
 
-I just wanted to let you know that I've uploaded a spreadsheet for you filled with Splunk search queries related to security. How awesome is that? 😎
+I hope this message finds you well. I am pleased to inform you that I have recently uploaded a comprehensive spreadsheet containing a variety of Splunk search queries specifically tailored for security purposes.
 
-And the best part is that you have the freedom to change and amend these search queries according to your preferences. So, feel free to make any adjustments that you think will work best for you.
+One of the key features of this resource is its flexibility: you are more than welcome to modify and adapt the search queries to suit your unique requirements and preferences. This ensures that you have full control over the customization process, enabling you to achieve optimal results.
 
-Oh, and just a heads up, I'll occasionally update the spreadsheet and include a version number. So make sure to keep an eye out for any updates!
+Please note that I will periodically update the spreadsheet to reflect the latest advancements and improvements in the field. Each update will be accompanied by a version number, so I encourage you to stay vigilant for any changes to ensure you have access to the most current information.
 
-Hope you find this helpful and have a great day! 🤗
+I trust that you will find this resource both valuable and user-friendly. Should you have any questions or require further assistance, please do not hesitate to reach out.
+
+Wishing you a productive and successful day.
