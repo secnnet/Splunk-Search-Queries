@@ -1,3 +1,5 @@
+# Splunk Search Queries
+
 Hello,
 
 I hope this message finds you well. I am pleased to inform you that I have recently uploaded a comprehensive search queries containing a variety of Splunk Splunk queries specifically tailored for security purposes.
