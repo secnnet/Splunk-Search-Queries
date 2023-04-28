@@ -4,10 +4,10 @@ index=security sourcetype=auth fail* host=bank.com
 | sort -count
 
 Search for successful logins from a specific stakeholder:
-index=security sourcetype=auth success host=bank.com user="john_doe"
+index=security sourcetype=auth success host=bank.com user="SecnNet"
 
 Search for all access to sensitive data from a specific stakeholder:
-index=security sourcetype=access_logs path="/sensitive_data/*" user="john_doe"
+index=security sourcetype=access_logs path="/sensitive_data/*" user="SecnNet"
 
 Search for all transactions above a certain amount:
 index=banking sourcetype=transactions amount>=10000
@@ -25,7 +25,7 @@ index=security sourcetype=auth action=modify
 | sort -count
 
 Search for all changes to user accounts made by a specific stakeholder:
-index=security sourcetype=auth action=modify user="john_doe"
+index=security sourcetype=auth action=modify user="SecnNet"
 
 Search for all connections to external IP addresses:
 index=networking sourcetype=connections dest_ip!="bank.com"
@@ -83,7 +83,7 @@ Search for all file access events for a specific file:
 index=security sourcetype=file_audit path="/sensitive_data/file.txt"
 
 Search for all file access events by a specific user:
-index=security sourcetype=file_audit user="john_doe"
+index=security sourcetype=file_audit user="SecnNet"
 
 Search for all file access events that match a specific operation:
 index=security sourcetype=file_audit operation="write"
@@ -98,7 +98,7 @@ Search for all VPN connections:
 index=security sourcetype=vpn_logs
 
 Search for all VPN connections initiated by a specific user:
-index=security sourcetype=vpn_logs user="john_doe"
+index=security sourcetype=vpn_logs user="SecnNet"
 
 Search for all VPN connections from a specific IP address:
 index=security sourcetype=vpn_logs src_ip="192.168.1.1"
@@ -122,7 +122,7 @@ Search for all changes to firewall rules:
 index=security sourcetype=firewall_changes
 
 Search for all changes to firewall rules made by a specific user:
-index=security sourcetype=firewall_changes user="john_doe"
+index=security sourcetype=firewall_changes user="SecnNet"
 
 Search for all traffic to and from a specific subnet:
 (index=networking sourcetype=connections) OR (index=networking sourcetype=dns) 
@@ -132,13 +132,13 @@ Search for all changes to user roles:
 index=security sourcetype=user_roles_changes
 
 Search for all changes to user roles made by a specific user:
-index=security sourcetype=user_roles_changes user="john_doe"
+index=security sourcetype=user_roles_changes user="SecnNet"
 
 Search for all SSH sessions:
 index=security sourcetype=ssh_logs
 
 Search for all SSH sessions initiated by a specific user:
-index=security sourcetype=ssh_logs user="john_doe"
+index=security sourcetype=ssh_logs user="SecnNet"
 
 Search for all SSH sessions to a specific host:
 index=security sourcetype=ssh_logs dest_host="10.0.0.1"
@@ -160,13 +160,13 @@ Search for all changes to file permissions:
 index=security sourcetype=file_permissions_changes
 
 Search for all changes to file permissions made by a specific user:
-index=security sourcetype=file_permissions_changes user="john_doe"
+index=security sourcetype=file_permissions_changes user="SecnNet"
 
 Search for all FTP sessions:
 index=security sourcetype=ftp_logs
 
 Search for all FTP sessions initiated by a specific user:
-index=security sourcetype=ftp_logs user="john_doe"
+index=security sourcetype=ftp_logs user="SecnNet"
 
 Search for all FTP sessions to a specific host:
 index=security sourcetype=ftp_logs dest_host="10.0.0.1"
@@ -175,7 +175,7 @@ Search for all changes to database permissions:
 index=security sourcetype=db_permissions_changes
 
 Search for all changes to database permissions made by a specific user:
-index=security sourcetype=db_permissions_changes user="john_doe"
+index=security sourcetype=db_permissions_changes user="SecnNet"
 
 Search for all database access events:
 index=security sourcetype=db_audit_logs
@@ -197,13 +197,13 @@ Search for all login events across all systems:
 index=* sourcetype=login_events
 
 Search for all login events from a specific user:
-index=* sourcetype=login_events user="john_doe"
+index=* sourcetype=login_events user="SecnNet"
 
 Search for all RDP connections:
 index=security sourcetype=rdp_logs
 
 Search for all RDP connections initiated by a specific user:
-index=security sourcetype=rdp_logs user="john_doe"
+index=security sourcetype=rdp_logs user="SecnNet"
 
 0Search for all RDP connections to a specific host:
 index=security sourcetype=rdp_logs dest_host="10.0.0.1"
@@ -212,7 +212,7 @@ Search for all changes to group membership:
 index=security sourcetype=group_membership_changes
 
 Search for all changes to group membership made by a specific user:
-index=security sourcetype=group_membership_changes user="john_doe"
+index=security sourcetype=group_membership_changes user="SecnNet"
 
 Search for all connections to a specific database:
 index=security sourcetype=db_connections_logs db_name="my_database"
@@ -247,7 +247,7 @@ Search for all changes to system configurations:
 index=security sourcetype=system_config_changes
 
 Search for all changes to system configurations made by a specific user:
-index=security sourcetype=system_config_changes user="john_doe"
+index=security sourcetype=system_config_changes user="SecnNet"
 
 Search for all traffic from a specific IP address to a specific domain:
 index=web sourcetype=access_logs src_ip="192.168.1.1" uri_domain="bank.com"
@@ -266,10 +266,10 @@ Search for all changes to system accounts:
 index=security sourcetype=system_account_changes
 
 Search for all changes to system accounts made by a specific user:
-index=security sourcetype=system_account_changes user="john_doe"
+index=security sourcetype=system_account_changes user="SecnNet"
 
 Search for all changes to group membership of a specific user:
-index=security sourcetype=group_membership_changes user="john_doe"
+index=security sourcetype=group_membership_changes user="SecnNet"
 
 Search for all changes to firewall rules that were denied:
 index=security sourcetype=firewall_changes action="deny"
@@ -278,7 +278,7 @@ Search for all changes to firewall rules that were allowed:
 index=security sourcetype=firewall_changes action="allow"
 
 Search for all changes to firewall rules that were made by a specific user:
-index=security sourcetype=firewall_changes user="john_doe"
+index=security sourcetype=firewall_changes user="SecnNet"
 
 Search for all changes to system accounts made in the past week:
 index=security sourcetype=system_account_changes earliest=-7d@d
@@ -360,7 +360,7 @@ Search for all changes to printer configurations made in the past week:
 index=security sourcetype=printer_config_changes earliest=-7d@d
 
 Search for all changes to Active Directory group memberships made by a specific user:
-index=security sourcetype=ad_group_membership_changes user="john_doe"
+index=security sourcetype=ad_group_membership_changes user="SecnNet"
 
 Search for all changes to security policies made in the past week:
 index=security sourcetype=security_policy_changes earliest=-7d@d
@@ -396,7 +396,7 @@ Search for all failed authentication attempts on a specific server in the past 2
 index=security sourcetype=authentication_events earliest=-1d@d host="server01" success=false
 
 Search for all successful authentication attempts by a specific user in the past week:
-index=security sourcetype=authentication_events earliest=-7d@d user="john_doe" success=true
+index=security sourcetype=authentication_events earliest=-7d@d user="SecnNet" success=true
 
 Search for all changes to AWS security group configurations made in the past week:
 index=security sourcetype=aws_sg_changes earliest=-7d@d
