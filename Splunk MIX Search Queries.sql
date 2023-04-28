@@ -719,5 +719,37 @@ index=SecnNet sourcetype="netbios"
 | stats count by name_service, src_ip, dest_ip
 | where count > 1000
 
+Search for any events that mention "RC4-HMAC":
+index=SecnNet "RC4-HMAC"
+
+Search for SSL/TLS connections that use RC4-HMAC cipher suite:
+index=SecnNet sourcetype=ssl:default ssl_cipher_suite="RC4-HMAC"
+
+Search for Windows events related to RC4-HMAC cipher usage:
+index=SecnNet sourcetype="WinEventLog:Security" EventCode=4624 src_nt_domain=your_domain_here AuthenticationPackageName="Negotiate" LogonType=3 | rex field=TargetUserName ".\\(?<username>[^\s]+)" | search username!="ANONYMOUS LOGON" | search username!="*$"
+
+Search for SSH connections that use RC4-HMAC cipher suite:
+index=SecnNet sourcetype=ssh:log ssh_cipher="arcfour-hmac"
+These search queries should help you identify any events 
+
+Search for WPA2 wireless networks that use RC4-HMAC cipher:
+index=SecnNet sourcetype=wifi:ssid | search security="WPA2" | search pairwise_cipher="TKIP" | search group_cipher="TKIP" | search key_mgmt="WPA-PSK" | search ieee80211_cipher="RC4"
+
+Search for TLS connections that use RC4-HMAC cipher suite and have a weak key size:
+index=SecnNet sourcetype=ssl:default ssl_cipher_suite="RC4-HMAC" | rex field=ssl_cipher_suite "RC4-HMAC-(?<key_size>\d+)" | search key_size<128
+
+Search for HTTP requests or responses that use RC4-HMAC cipher suite:
+index=SecnNet sourcetype="access_combined_wcookie" | search cs_cipher_suite="RC4-HMAC" OR sc_cipher_suite="RC4-HMAC"
+
+Search for SSH connections that use RC4-HMAC cipher suite and have weak key exchange algorithms:
+index=SecnNet sourcetype=ssh:log ssh_cipher="arcfour-hmac" | rex field=ssh_kex_algorithm "(?<kex_algorithm>\w+)\-" | search kex_algorithm="diffie-hellman-group1-sha1" OR kex_algorithm="diffie-hellman-group14-sha1"
+
+Search for SSL/TLS connections that use RC4-HMAC cipher suite and have weak Diffie-Hellman key exchange parameters:
+index=SecnNet sourcetype=ssl:default ssl_cipher_suite="RC4-HMAC" | rex field=ssl_cipher_suite "RC4-HMAC-(?<key_size>\d+)" | search key_size>=128 | search ssl_early_data=true | search ssl_server_cert_chain_verified=true | search ssl_key_exchange_algorithm="ECDHE|DHE"
+
+Search for TLS connections that use RC4-HMAC cipher suite and have expired certificates:
+index=SecnNet sourcetype=ssl:default ssl_cipher_suite="RC4-HMAC" | search ss
+
+
 
 
