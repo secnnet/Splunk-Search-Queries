@@ -19,7 +19,7 @@ index=dns query_type=A NOT query_name=*.local
 | stats count by query
 
 Detecting Brute Force Attacks:
-index=main sourcetype="WinEventLog:Security" EventCode=4625
+index=SecnNet sourcetype="WinEventLog:Security" EventCode=4625
 | stats count by src_user
 | where count>5
 
@@ -30,7 +30,7 @@ index=web sourcetype="access_combined" cs_method=POST
 | where count > 50
 
 Detecting Data Exfiltration:
-index=main sourcetype="WinEventLog:Security" EventCode=4663
+index=SecnNet sourcetype="WinEventLog:Security" EventCode=4663
 | rex field=object_path "\\([^\\]+)\[^\\]+$"
 | stats count by dest_user, extracted_field
 | where count > 100
@@ -42,7 +42,7 @@ index=SecnNet sourcetype="netflow"
 | where total_sent > 100
 
 Detecting Suspicious Login Activity:
-index=main sourcetype="WinEventLog:Security" (EventCode=4624 OR EventCode=4672)
+index=SecnNet sourcetype="WinEventLog:Security" (EventCode=4624 OR EventCode=4672)
 | stats count by src_user, dest
 | where count>100
 
@@ -54,7 +54,7 @@ index=web sourcetype="access_combined"
 | where count > 100
 
 Detecting Malware Infections:
-index=main sourcetype="WinEventLog:Security" EventCode=4688
+index=SecnNet sourcetype="WinEventLog:Security" EventCode=4688
 | search Image_Path IN (".exe",".dll","*.ocx")
 | stats count by Account_Name, Image_Path
 | where count > 100
@@ -105,7 +105,7 @@ index=SecnNet sourcetype="WinEventLog:Security" EventCode=4663
 | where count > 50
 
 Detecting Account Takeover:
-index=main sourcetype="WinEventLog:Security" EventCode=4624
+index=SecnNet sourcetype="WinEventLog:Security" EventCode=4624
 | stats count by account_name, src_ip
 | where count > 50
 
