@@ -1,0 +1,502 @@
+Search for all unsuccessful login attempts to ServiceNow in the last 24 hours:
+index=security sourcetype="access_combined" action="failed" request_uri="/login.do"
+| stats count by src_ip
+
+Identify all user accounts that have been locked out in ServiceNow:
+index=security sourcetype="access_combined" useraction="LockoutUser"
+| table _time, user, useragent, src_ip
+
+Search for successful logins from a specific IP address to ServiceNow:
+index=security sourcetype="access_combined" action="authenticated" src_ip=<IP address>
+| table _time, user, useragent
+
+Monitor ServiceNow audit logs for any unauthorized changes to user accounts:
+index=audit sourcetype="servicenow:security_audit" operation="update" result="failure" object="sys_user"
+| table _time, user, object, message
+
+Search for all incidents created in ServiceNow that are classified as high priority:
+index=servicenow sourcetype="snow:incident" priority="1"
+| table _time, short_description, assignment_group, priority
+
+Identify all user accounts that have been deleted from ServiceNow:
+index=servicenow sourcetype="snow:user_account" action="delete"
+| table _time, user, user_agent
+
+Identify all ServiceNow tickets that were created from a specific IP address:
+index=servicenow sourcetype="snow:incident"
+| search src_ip=<IP address>
+| table _time, short_description, priority, assignment_group
+
+Search for all incidents in ServiceNow that are assigned to a specific user group:
+index=servicenow sourcetype="snow:incident"
+| search assignment_group="group_name"
+| table _time, short_description, priority, assigned_to
+
+Monitor for any failed login attempts from a specific user to ServiceNow:
+index=security sourcetype="access_combined" action="failed" request_uri="/login.do" user=<username>
+| table _time, src_ip, user
+
+Search for all incidents that were modified in ServiceNow by a specific user:
+index=servicenow sourcetype="snow:incident"
+| search changed_by=<username>
+| table _time, short_description, priority, assignment_group
+
+Identify all ServiceNow tickets that have been closed in the last 24 hours:
+index=servicenow sourcetype="snow:incident"
+| search state="closed"
+| where _time >= relative_time(now(), "-24h")
+| table _time, short_description, priority, assigned_to
+
+Identify all ServiceNow incidents that have attachments:
+index=servicenow sourcetype="snow:incident"
+| search attachments > 0
+| table _time, short_description, priority, attachment_names
+
+Search for all ServiceNow tickets that contain specific keywords in the description field:
+index=servicenow sourcetype="snow:incident"
+| search description="*keyword1* OR *keyword2*"
+| table _time, short_description, priority, assigned_to
+
+Monitor for any changes made to ServiceNow incident priority levels:
+index=servicenow sourcetype="snow:incident"
+| search changed_fields="priority"
+| table _time, short_description, priority, assigned_to, changed_by
+
+Identify all ServiceNow incidents that have exceeded their SLA deadline:
+index=servicenow sourcetype="snow:incident"
+| search sla_state="breached"
+| table _time, short_description, priority, assigned_to, sla_description
+
+Search for all ServiceNow incidents that have been resolved within the last 24 hours:
+index=servicenow sourcetype="snow:incident"
+| search state="resolved"
+| where _time >= relative_time(now(), "-24h")
+| table _time, short_description, priority, assigned_to
+
+Search for all ServiceNow incidents that have been reopened:
+index=servicenow sourcetype="snow:incident"
+| search state="reopened"
+| table _time, short_description, priority, assigned_to
+
+Monitor for any changes made to ServiceNow incidents that were created by a specific user:
+index=servicenow sourcetype="snow:incident"
+| search created_by=<username> changed_fields=*
+| table _time, short_description, priority, assigned_to, changed_by, changed_fields
+
+Identify all ServiceNow incidents that have been escalated to a specific user group:
+index=servicenow sourcetype="snow:incident"
+| search priority="1" AND assignment_group="group_name"
+| table _time, short_description, priority, assigned_to, escalation
+
+Search for all ServiceNow tickets that have been assigned to a specific user within the last 24 hours:
+index=servicenow sourcetype="snow:incident"
+| search assigned_to=<username> AND _time >= relative_time(now(), "-24h")
+| table _time, short_description, priority, assigned_to
+
+Identify all ServiceNow incidents that have been linked to a specific change request:
+index=servicenow sourcetype="snow:incident"
+| search change_request=<number>
+| table _time, short_description, priority, assigned_to, change_request
+
+Identify all ServiceNow incidents that have been resolved with a specific resolution code:
+index=servicenow sourcetype="snow:incident"
+| search state="resolved" AND close_code=<code>
+| table _time, short_description, priority, assigned_to, close_code
+
+Monitor for any changes made to ServiceNow incidents that were created from a specific IP address:
+index=servicenow sourcetype="snow:incident"
+| search created_from=<IP address> changed_fields=*
+| table _time, short_description, priority, assigned_to, changed_by, changed_fields
+
+Search for all ServiceNow tickets that have been created within the last 24 hours:
+index=servicenow sourcetype="snow:incident"
+| search _time >= relative_time(now(), "-24h")
+| table _time, short_description, priority, assigned_to
+
+Identify all ServiceNow incidents that have been reopened  than once:
+index=servicenow sourcetype="snow:incident"
+| stats count(eval(state="reopened")) as reopen_count by number
+| search reopen_count > 1
+| table number, reopen_count
+
+Search for all ServiceNow tickets that have been updated by a specific user within the last 24 hours:
+index=servicenow sourcetype="snow:incident"
+| search updated_by=<username> AND _time >= relative_time(now(), "-24h")
+| table _time, short_description, priority, assigned_to
+
+Monitor for any changes made to ServiceNow incidents that contain a specific keyword in the description field:
+index=servicenow sourcetype="snow:incident"
+| search description=*keyword* changed_fields=*
+| table _time, short_description, priority, assigned_to, changed_by, changed_fields
+
+Identify all ServiceNow incidents that have exceeded their due date for closure:
+index=servicenow sourcetype="snow:incident"
+| search due_date <= now() AND state != "resolved"
+| table _time, short_description, priority, assigned_to, due_date
+
+Search for all ServiceNow incidents that have been reopened within the last 24 hours:
+index=servicenow sourcetype="snow:incident"
+| search state="reopened" AND _time >= relative_time(now(), "-24h")
+| table _time, short_description, priority, assigned_to
+
+Identify all ServiceNow incidents that have been resolved by a specific user:
+index=servicenow sourcetype="snow:incident"
+| search resolved_by=<username>
+| table _time, short_description, priority, assigned_to, resolved_by
+
+Search for all ServiceNow tickets that have been escalated to a higher priority within the last 24 hours:
+index=servicenow sourcetype="snow:incident"
+| search priority_change="true" AND _time >= relative_time(now(), "-24h")
+| table _time, short_description, priority, assigned_to, priority_change, priority_change_old, priority_change_new
+
+Identify all ServiceNow incidents that have been resolved with a specific resolution code within the last 24 hours:
+index=servicenow sourcetype="snow:incident"
+| search state="resolved" AND close_code=<code> AND _time >= relative_time(now(), "-24h")
+| table _time, short_description, priority, assigned_to, close_code
+
+Monitor for any changes made to ServiceNow incidents that were created by a specific user group:
+index=servicenow sourcetype="snow:incident"
+| search created_by_group="group_name" changed_fields=*
+| table _time, short_description, priority, assigned_to, changed_by, changed_fields
+
+Search for all ServiceNow tickets that have been assigned to a specific user group within the last 24 hours:
+index=servicenow sourcetype="snow:incident"
+| search assignment_group="group_name" AND _time >= relative_time(now(), "-24h")
+| table _time, short_description, priority, assigned_to
+
+Identify all ServiceNow incidents that have been reopened  than twice:
+index=servicenow sourcetype="snow:incident"
+| stats count(eval(state="reopened")) as reopen_count by number
+| search reopen_count > 2
+| table number, reopen_count
+
+Search for all ServiceNow tickets that have been assigned to a specific user and modified within the last 24 hours:
+index=servicenow sourcetype="snow:incident"
+| search assigned_to=<username> AND updated_at >= relative_time(now(), "-24h")
+| table _time, short_description, priority, assigned_to
+
+Identify all ServiceNow incidents that have been resolved with a specific resolution code within a specific time range:
+index=servicenow sourcetype="snow:incident"
+| search state="resolved" AND close_code=<code> AND _time >= "start_time" AND _time <= "end_time"
+| table _time, short_description, priority, assigned_to, close_code
+
+Monitor for any changes made to ServiceNow incidents that have exceeded their due date for closure:
+index=servicenow sourcetype="snow:incident"
+| search due_date <= now() AND state != "resolved" AND changed_fields=*
+| table _time, short_description, priority, assigned_to, changed_by, changed_fields
+
+Search for all ServiceNow tickets that have been escalated to a higher priority within the last week:
+index=servicenow sourcetype="snow:incident"
+| search priority_change="true" AND _time >= relative_time(now(), "-7d")
+| table _time, short_description, priority, assigned_to, priority_change, priority_change_old, priority_change_new
+
+Identify all ServiceNow incidents that have been updated by a specific user within a specific time range:
+index=servicenow sourcetype="snow:incident"
+| search updated_by=<username> AND _time >= "start_time" AND _time <= "end_time"
+| table _time, short_description, priority, assigned_to, updated_by
+
+Search for all ServiceNow tickets that have been assigned to a specific user and have a high priority:
+index=servicenow sourcetype="snow:incident"
+| search assigned_to=<username> AND priority="1"
+| table _time, short_description, priority, assigned_to
+
+Monitor for any changes made to ServiceNow incidents that contain a specific keyword in the description field and were assigned to a specific user:
+index=servicenow sourcetype="snow:incident"
+| search assigned_to=<username> description=*keyword* changed_fields=*
+| table _time, short_description, priority, assigned_to, changed_by, changed_fields
+
+Identify all ServiceNow incidents that have been resolved with a specific resolution code and are over a specific priority:
+index=servicenow sourcetype="snow:incident"
+| search state="resolved" AND close_code=<code> AND priority>"3"
+| table _time, short_description, priority, assigned_to, close_code
+
+Search for all ServiceNow tickets that have been updated within the last 24 hours and have a high priority:
+index=servicenow sourcetype="snow:incident"
+| search updated_at >= relative_time(now(), "-24h") AND priority="1"
+| table _time, short_description, priority, assigned_to
+
+Identify all ServiceNow incidents that have exceeded their due date for closure and were assigned to a specific user:
+index=servicenow sourcetype="snow:incident"
+| search due_date <= now() AND state != "resolved" AND assigned_to=<username>
+| table _time, short_description, priority, assigned_to, due_date
+
+Search for all ServiceNow tickets that were created from a specific email domain within the last 7 days:
+index=servicenow sourcetype="snow:incident"
+| search created_from="*@domain.com" AND _time >= relative_time(now(), "-7d")
+| table _time, short_description, priority, assigned_to, created_from
+
+Search for all ServiceNow tickets that were updated by a specific user within the last 24 hours and have a high priority:
+index=servicenow sourcetype="snow:incident"
+| search updated_by=<username> AND updated_at >= relative_time(now(), "-24h") AND priority="1"
+| table _time, short_description, priority, assigned_to, updated_by
+
+Identify all ServiceNow incidents that have exceeded their due date for closure and were assigned to a specific group:
+index=servicenow sourcetype="snow:incident"
+| search due_date <= now() AND state != "resolved" AND assignment_group=<group_name>
+| table _time, short_description, priority, assigned_to, due_date
+
+Monitor for any changes made to ServiceNow incidents that were assigned to a specific user and contain a specific keyword in the description field:
+index=servicenow sourcetype="snow:incident"
+| search assigned_to=<username> description=*keyword* changed_fields=*
+| table _time, short_description, priority, assigned_to, changed_by, changed_fields
+
+Search for all ServiceNow tickets that were created within the last week and have not been assigned to anyone:
+index=servicenow sourcetype="snow:incident"
+| search created_at >= relative_time(now(), "-7d") AND assignment_group="unassigned"
+| table _time, short_description, priority, assignment_group
+
+Identify all ServiceNow incidents that were resolved with a specific resolution code within the last week and have a high priority:
+index=servicenow sourcetype="snow:incident"
+| search state="resolved" AND close_code=<code> AND updated_at >= relative_time(now(), "-7d") AND priority="1"
+| table _time, short_description, priority, assigned_to, close_code
+
+Monitor for any changes made to ServiceNow incidents that were assigned to a specific group and contain a specific keyword in the description field:
+index=servicenow sourcetype="snow:incident"
+| search assignment_group=<group_name> description=*keyword* changed_fields=*
+| table _time, short_description, priority, assigned_to, changed_by, changed_fields
+
+Search for all ServiceNow tickets that were updated within the last 24 hours and have a high priority, and have been assigned to a specific group:
+index=servicenow sourcetype="snow:incident"
+| search updated_at >= relative_time(now(), "-24h") AND priority="1" AND assignment_group=<group_name>
+| table _time, short_description, priority, assigned_to, updated_by
+
+Identify all ServiceNow incidents that were reopened within the last week and have a high priority:
+index=servicenow sourcetype="snow:incident"
+| search state="reopened" AND updated_at >= relative_time(now(), "-7d") AND priority="1"
+| table _time, short_description, priority, assigned_to, updated_by
+
+Search for all ServiceNow tickets that were assigned to a specific user and have not been updated within the last 24 hours:
+index=servicenow sourcetype="snow:incident"
+| search assigned_to=<username> AND updated_at <= relative_time(now(), "-24h")
+| table _time, short_description, priority, assigned_to
+
+Identify all ServiceNow incidents that have exceeded their due date for closure and have a high priority:
+index=servicenow sourcetype="snow:incident"
+| search due_date <= now() AND state != "resolved" AND priority="1"
+| table _time, short_description, priority, assigned_to, due_date
+
+Monitor for any changes made to ServiceNow incidents that have exceeded their due date for closure and contain a specific keyword in the description field:
+index=servicenow sourcetype="snow:incident"
+| search due_date <= now() AND state != "resolved" AND description=*keyword* changed_fields=*
+| table _time, short_description, priority, assigned_to, changed_by, changed_fields
+
+Identify all ServiceNow incidents that have been updated with a specific state and contain a specific keyword in the description field within the last 7 days:
+index=servicenow sourcetype="snow:incident"
+| search state=<state> AND description=*keyword* AND updated_at >= relative_time(now(), "-7d")
+| table _time, short_description, priority, assigned_to, state
+
+Search for all ServiceNow tickets that have been resolved with a specific resolution code and assigned to a specific group:
+index=servicenow sourcetype="snow:incident"
+| search state="resolved" AND close_code=<code> AND assignment_group=<group_name>
+| table _time, short_description, priority, assigned_to, close_code
+
+Identify all ServiceNow incidents that have exceeded their due date for closure and were assigned to a specific user within the last 7 days:
+index=servicenow sourcetype="snow:incident"
+| search due_date <= now() AND state != "resolved" AND assigned_to=<username> AND updated_at >= relative_time(now(), "-7d")
+| table _time, short_description, priority, assigned_to, due_date
+
+Search for all ServiceNow tickets that have been assigned to a specific group and have a high priority:
+index=servicenow sourcetype="snow:incident"
+| search assignment_group=<group_name> AND priority="1"
+| table _time, short_description, priority, assigned_to
+
+Monitor for any changes made to ServiceNow incidents that were created within the last week and contain a specific keyword in the description field:
+index=servicenow sourcetype="snow:incident"
+| search created_at >= relative_time(now(), "-7d") AND description=*keyword* changed_fields=*
+| table _time, short_description, priority, assigned_to, changed_by, changed_fields
+
+Identify all ServiceNow incidents that have been updated with a specific state within the last 24 hours and have a high priority:
+index=servicenow sourcetype="snow:incident"
+| search state=<state> AND updated_at >= relative_time(now(), "-24h") AND priority="1"
+| table _time, short_description, priority, assigned_to, state
+
+Search for all ServiceNow tickets that have been assigned to a specific user and have a high priority, and were updated within the last 24 hours:
+index=servicenow sourcetype="snow:incident"
+| search assigned_to=<username> AND updated_at >= relative_time(now(), "-24h") AND priority="1"
+| table _time, short_description, priority, assigned_to, updated_by
+
+Identify all ServiceNow incidents that have exceeded their due date for closure and have not been updated within the last 48 hours:
+index=servicenow sourcetype="snow:incident"
+| search due_date <= now() AND state != "resolved" AND updated_at <= relative_time(now(), "-48h")
+| table _time, short_description, priority, assigned_to, due_date
+
+Search for all ServiceNow tickets that were created within the last 24 hours and have a high priority:
+index=servicenow sourcetype="snow:incident"
+| search created_at >= relative_time(now(), "-24h") AND priority="1"
+| table _time, short_description, priority, assigned_to
+
+Identify all ServiceNow incidents that have exceeded their due date for closure and contain a specific keyword in the description field:
+index=servicenow sourcetype="snow:incident"
+| search due_date <= now() AND state != "resolved" AND description=*keyword*
+| table _time, short_description, priority, assigned_to, due_date
+
+Search for all ServiceNow tickets that were assigned to a specific user and have a medium priority:
+index=servicenow sourcetype="snow:incident"
+| search assigned_to=<username> AND priority="2"
+| table _time, short_description, priority, assigned_to, updated_by
+
+Monitor for any changes made to ServiceNow incidents that were assigned to a specific user and have exceeded their due date for closure:
+index=servicenow sourcetype="snow:incident"
+| search assigned_to=<username> AND due_date <= now() AND state != "resolved" changed_fields=*
+| table _time, short_description, priority, assigned_to, changed_by, changed_fields
+
+Identify all ServiceNow incidents that have been updated with a specific state within the last 48 hours and have a medium priority:
+index=servicenow sourcetype="snow:incident"
+| search state=<state> AND updated_at >= relative_time(now(), "-48h") AND priority="2"
+| table _time, short_description, priority, assigned_to, state
+
+Search for all ServiceNow tickets that were assigned to a specific group and have not been updated within the last 72 hours:
+index=servicenow sourcetype="snow:incident"
+| search assignment_group=<group_name> AND updated_at <= relative_time(now(), "-72h")
+| table _time, short_description, priority, assigned_to
+
+Search for all ServiceNow tickets that have a specific priority and have been updated within the last 24 hours:
+index=servicenow sourcetype="snow:incident"
+| search priority=<priority> AND updated_at >= relative_time(now(), "-24h")
+| table _time, short_description, priority, assigned_to, updated_by
+
+Identify all ServiceNow incidents that have exceeded their due date for closure and were assigned to a specific group within the last 48 hours:
+index=servicenow sourcetype="snow:incident"
+| search due_date <= now() AND state != "resolved" AND assignment_group=<group_name> AND updated_at >= relative_time(now(), "-48h")
+| table _time, short_description, priority, assigned_to, due_date
+
+Monitor for any changes made to ServiceNow incidents that were created within the last week and contain a specific keyword in the description field and were assigned to a specific user:
+index=servicenow sourcetype="snow:incident"
+| search created_at >= relative_time(now(), "-7d") AND description=*keyword* AND assigned_to=<username> changed_fields=*
+| table _time, short_description, priority, assigned_to, changed_by, changed_fields
+
+Search for all ServiceNow tickets that have been resolved with a specific resolution code within the last 24 hours:
+index=servicenow sourcetype="snow:incident"
+| search state="resolved" AND close_code=<code> AND updated_at >= relative_time(now(), "-24h")
+| table _time, short_description, priority, assigned_to, close_code
+
+Identify all ServiceNow incidents that have been updated with a specific state within the last 48 hours and have a low priority:
+index=servicenow sourcetype="snow:incident"
+| search state=<state> AND updated_at >= relative_time(now(), "-48h") AND priority="3"
+| table _time, short_description, priority, assigned_to, state
+
+Search for all ServiceNow tickets that have been updated within the last 48 hours and contain a specific keyword in the description field:
+index=servicenow sourcetype="snow:incident"
+| search updated_at >= relative_time(now(), "-48h") AND description=*keyword*
+| table _time, short_description, priority, assigned_to, updated_by
+
+Identify all ServiceNow incidents that have exceeded their due date for closure and have a low priority:
+index=servicenow sourcetype="snow:incident"
+| search due_date <= now() AND state != "resolved" AND priority="3"
+| table _time, short_description, priority, assigned_to, due_date
+
+Monitor for any changes made to ServiceNow incidents that have a specific priority and contain a specific keyword in the description field:
+index=servicenow sourcetype="snow:incident"
+| search priority=<priority> AND description=*keyword* changed_fields=*
+| table _time, short_description, priority, assigned_to, changed_by, changed_fields
+
+Identify all ServiceNow incidents that have been resolved with a specific resolution code within the last 24 hours and have a high priority:
+index=servicenow sourcetype="snow:incident"
+| search state="resolved" AND close_code=<code> AND priority="1" AND updated_at >= relative_time(now(), "-24h")
+| table _time, short_description, priority, assigned_to, close_code
+
+Search for all ServiceNow tickets that were created by a specific user and have a medium priority:
+index=servicenow sourcetype="snow:incident"
+| search created_by=<username> AND priority="2"
+| table _time, short_description, priority, assigned_to, created_at
+
+Search for all ServiceNow tickets that have been updated within the last 24 hours and have a specific priority:
+index=servicenow sourcetype="snow:incident"
+| search updated_at >= relative_time(now(), "-24h") AND priority=<priority>
+| table _time, short_description, priority, assigned_to, updated_by
+
+Identify all ServiceNow incidents that have exceeded their due date for closure and have not been assigned to anyone:
+index=servicenow sourcetype="snow:incident"
+| search due_date <= now() AND state != "resolved" AND assigned_to="unassigned"
+| table _time, short_description, priority, due_date
+
+Monitor for any changes made to ServiceNow incidents that have a specific priority and were created within the last week:
+index=servicenow sourcetype="snow:incident"
+| search priority=<priority> AND created_at >= relative_time(now(), "-7d") changed_fields=*
+| table _time, short_description, priority, assigned_to, changed_by, changed_fields
+
+Identify all ServiceNow incidents that have been resolved within the last 24 hours and have a high priority:
+index=servicenow sourcetype="snow:incident"
+| search state="resolved" AND priority="1" AND updated_at >= relative_time(now(), "-24h")
+| table _time, short_description, priority, assigned_to, close_code
+
+Search for all ServiceNow tickets that were assigned to a specific user and have not been updated within the last 48 hours:
+index=servicenow sourcetype="snow:incident"
+| search assigned_to=<username> AND updated_at <= relative_time(now(), "-48h")
+| table _time, short_description, priority, assigned_to
+
+Search for all ServiceNow tickets that have been resolved within the last 24 hours and contain a specific keyword in the description field:
+index=servicenow sourcetype="snow:incident"
+| search state="resolved" AND close_notes=*keyword* AND updated_at >= relative_time(now(), "-24h")
+| table _time, short_description, priority, assigned_to, close_notes
+
+Identify all ServiceNow incidents that have exceeded their due date for closure and were created by a specific user within the last week:
+index=servicenow sourcetype="snow:incident"
+| search due_date <= now() AND state != "resolved" AND created_by=<username> AND created_at >= relative_time(now(), "-7d")
+| table _time, short_description, priority, assigned_to, due_date
+
+Monitor for any changes made to ServiceNow incidents that have a specific priority and were created within the last 24 hours:
+index=servicenow sourcetype="snow:incident"
+| search priority=<priority> AND created_at >= relative_time(now(), "-24h") changed_fields=*
+| table _time, short_description, priority, assigned_to, changed_by, changed_fields
+
+Identify all ServiceNow incidents that have been updated with a specific state within the last 48 hours and have not been assigned to anyone:
+index=servicenow sourcetype="snow:incident"
+| search state=<state> AND updated_at >= relative_time(now(), "-48h") AND assigned_to="unassigned"
+| table _time, short_description, priority, state
+
+Search for all ServiceNow tickets that have been resolved within the last 24 hours and contain a specific keyword in the close notes:
+index=servicenow sourcetype="snow:incident"
+| search state="resolved" AND close_notes=*keyword* AND updated_at >= relative_time(now(), "-24h")
+| table _time, short_description, priority, assigned_to, close_notes
+
+Search for all ServiceNow tickets that have been assigned to a specific group and contain a specific keyword in the description field:
+index=servicenow sourcetype="snow:incident"
+| search assignment_group=<groupname> AND description=*keyword*
+| table _time, short_description, priority, assigned_to, assignment_group
+
+Identify all ServiceNow incidents that have been updated with a specific state within the last 24 hours and have a medium priority:
+index=servicenow sourcetype="snow:incident"
+| search state=<state> AND priority="2" AND updated_at >= relative_time(now(), "-24h")
+| table _time, short_description, priority, assigned_to, state
+
+Monitor for any changes made to ServiceNow incidents that have not been resolved and contain a specific keyword in the description field:
+index=servicenow sourcetype="snow:incident"
+| search state!="resolved" AND description=*keyword* changed_fields=*
+| table _time, short_description, priority, assigned_to, changed_by, changed_fields
+
+Identify all ServiceNow incidents that have been assigned to a specific user within the last 48 hours and have not been updated:
+index=servicenow sourcetype="snow:incident"
+| search assigned_to=<username> AND updated_at <= relative_time(now(), "-48h")
+| table _time, short_description, priority, assigned_to
+
+Search for all ServiceNow tickets that have been created with a specific priority and contain a specific keyword in the description field:
+index=servicenow sourcetype="snow:incident"
+| search priority=<priority> AND description=*keyword*
+| table _time, short_description, priority, assigned_to, created_at
+
+Identify all ServiceNow incidents that have been updated with a specific state within the last 24 hours and have a low priority:
+index=servicenow sourcetype="snow:incident"
+| search state=<state> AND priority="3" AND updated_at >= relative_time(now(), "-24h")
+| table _time, short_description, priority, assigned_to, state
+
+Search for all ServiceNow tickets that have been created with a specific priority and contain a specific keyword in the short description field:
+index=servicenow sourcetype="snow:incident"
+| search priority=<priority> AND short_description=*keyword*
+| table _time, short_description, priority, assigned_to, created_at
+
+Identify all ServiceNow incidents that have been resolved with a specific resolution code within the last week:
+index=servicenow sourcetype="snow:incident"
+| search state="resolved" AND close_code=<code> AND updated_at >= relative_time(now(), "-7d")
+| table _time, short_description, priority, assigned_to, close_code
+
+Monitor for any changes made to ServiceNow incidents that have been assigned to a specific group within the last 24 hours:
+index=servicenow sourcetype="snow:incident"
+| search assignment_group=<groupname> AND updated_at >= relative_time(now(), "-24h") changed_fields=*
+| table _time, short_description, priority, assigned_to, changed_by, changed_fields
+
+Search for all ServiceNow tickets that have been created within the last 48 hours and have a specific category:
+index=servicenow sourcetype="snow:incident"
+| search category=<category> AND created_at >= relative_time(now(), "-48h")
+| table _time, short_description, priority, assigned_to, created_by
+
