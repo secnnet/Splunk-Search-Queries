@@ -2,7 +2,7 @@
 
 Hello,
 
-I hope this message finds you well. I am pleased to inform you that I have recently uploaded a comprehensive search query containing a variety of Splunk queries specifically tailored for security purposes.
+I am pleased to inform you that I have recently uploaded a comprehensive search query containing a variety of Splunk queries specifically tailored for security purposes.
 
 One of the key features of this resource is its flexibility. You are more than welcome to modify and adapt the Splunk queries to suit your unique requirements and preferences. This ensures that you have full control over the customization process, enabling you to achieve optimal results.
 
