@@ -749,7 +749,3 @@ index=SecnNet sourcetype=ssl:default ssl_cipher_suite="RC4-HMAC" | rex field=ssl
 
 Search for TLS connections that use RC4-HMAC cipher suite and have expired certificates:
 index=SecnNet sourcetype=ssl:default ssl_cipher_suite="RC4-HMAC" | search ss
-
-
-
-
