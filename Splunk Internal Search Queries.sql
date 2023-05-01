@@ -226,9 +226,95 @@ index=*
 | stats count by index
 | sort - count
 
+Analyzing search head cluster manager activity:
+index=_internal sourcetype=splunkd_search_head_cluster component=SHCManager
+| stats count by log_level, message
 
+Monitoring average search latency:
+index=_audit action=search
+| stats avg(latency) as AvgLatency by user
+| sort - AvgLatency
 
+Investigating indexer cluster master activity:
+index=_internal sourcetype=splunkd_indexer_cluster component=IndexerClusterMaster
+| stats count by log_level, message
 
+Identifying searches with the longest run time:
+index=_audit action=search
+| stats max(run_time) as LongestRunTime by search
+| sort - LongestRunTime
+| head 10
 
+Troubleshooting scripted input errors:
+index=_internal sourcetype=script_runner log_level=ERROR
+| stats count by log_level, message
 
+Monitoring search head cluster member replication activity:
+index=_internal sourcetype=splunkd_search_head_cluster component=SHCReplication
+| stats count by log_level, message
+
+Identifying top users by search count:
+index=_audit action=search
+| stats count by user
+| sort - count
+
+Analyzing Splunk Web server activity:
+index=_internal sourcetype=splunk_web_service
+| stats count by log_level, message
+
+Investigating license manager activity:
+index=_internal sourcetype=splunkd component=LicenseManager
+| stats count by log_level, message
+
+Identifying top search commands by usage:
+index=_audit action=search
+| rex field=search "(?<search_command>\\|\\s?[a-zA-Z]+)"
+| stats count by search_command
+| sort - count
+
+Monitoring average search execution time:
+index=_internal sourcetype=searches_admin
+| stats avg(execution_time) as AvgExecutionTime by user
+| sort - AvgExecutionTime
+
+Investigating search scheduler activity:
+index=_internal sourcetype=scheduler
+| stats count by log_level, message
+
+Identifying most frequent search errors:
+index=_internal sourcetype=search_messages log_level=ERROR
+| top limit=10 message
+
+Monitoring app server activity:
+index=_internal sourcetype=splunk_app_server
+| stats count by log_level, message
+
+Identifying most recent search errors:
+index=_internal sourcetype=search_messages log_level=ERROR
+| table _time, message
+| sort - _time
+
+Troubleshooting REST API errors:
+index=_internal sourcetype=splunkd_rest_access status!=200
+| stats count by status, uri_path
+| sort - count
+
+Monitoring search concurrency by app:
+index=_audit action=search
+| stats count by app, search_id
+| sort - count
+
+Investigating search metadata activity:
+index=_internal sourcetype=splunkd component=SearchMetadata
+| stats count by log_level, message
+
+Identifying most frequent failed searches:
+index=_audit action=search status=failure
+| top limit=10 search
+
+Monitoring search concurrency by search type (adhoc, scheduled, or other):
+index=_audit action=search
+| eval search_type=if(isnull(savedsearch_name),"adhoc",if(savedsearch_name="scheduler","scheduled","other"))
+| stats count by search_type, search_id
+| sort - count
 
