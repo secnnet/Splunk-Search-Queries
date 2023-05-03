@@ -1,0 +1,305 @@
+Search for Universal Forwarder errors:
+index=_internal sourcetype=splunkd component=UniversalForwarder ERROR
+
+Search for all Universal Forwarder events within a time range:
+index=_internal sourcetype=splunkd component=UniversalForwarder earliest=-1h
+
+Search for Universal Forwarder events with specific keywords:
+index=_internal sourcetype=splunkd component=UniversalForwarder "error" OR "warning"
+
+Search for Universal Forwarder events with specific log levels:
+index=_internal sourcetype=splunkd component=UniversalForwarder log_level="ERROR" OR log_level="WARN"
+
+Search for Universal Forwarder events with specific host or source:
+index=_internal sourcetype=splunkd component=UniversalForwarder host="your_host" source="your_source"
+
+Search for Universal Forwarder events with specific forwarder type:
+index=_internal sourcetype=splunkd component=UniversalForwarder forwarder_type="uf"
+
+Search for Universal Forwarder events with specific process ID:
+index=_internal sourcetype=splunkd component=UniversalForwarder process_id="12345"
+
+Search for Universal Forwarder events with specific user:
+index=_internal sourcetype=splunkd component=UniversalForwarder user="your_user"
+
+Search for Universal Forwarder events with specific error code:
+index=_internal sourcetype=splunkd component=UniversalForwarder error_code="your_error_code"
+
+Search for Universal Forwarder events related to configuration changes:
+index=_internal sourcetype=splunkd component=UniversalForwarder "configuration changed"
+
+Search for Universal Forwarder events related to inputs:
+index=_internal sourcetype=splunkd component=UniversalForwarder input_status
+
+Search for Universal Forwarder events related to outputs:
+index=_internal sourcetype=splunkd component=UniversalForwarder output_status
+
+Search for Universal Forwarder events related to forwarding:
+index=_internal sourcetype=splunkd component=UniversalForwarder forwarded
+
+Search for Universal Forwarder events related to authentication:
+index=_internal sourcetype=splunkd component=UniversalForwarder authentication
+
+Search for Universal Forwarder events related to SSL/TLS:
+index=_internal sourcetype=splunkd component=UniversalForwarder ssl
+
+Search for Universal Forwarder events related to deployment server:
+index=_internal sourcetype=splunkd component=UniversalForwarder deployment_server
+
+Search for Universal Forwarder events related to metrics:
+index=_internal sourcetype=splunkd component=UniversalForwarder metrics
+
+Search for Universal Forwarder events related to log rotation:
+index=_internal sourcetype=splunkd component=UniversalForwarder "rotation finished"
+
+Search for Universal Forwarder events related to license issues:
+index=_internal sourcetype=splunkd component=UniversalForwarder license
+
+Search for Universal Forwarder events related to deployment client:
+index=_internal sourcetype=splunkd component=UniversalForwarder deployment_client
+
+Search for Universal Forwarder events related to HTTP Event Collector (HEC):
+index=_internal sourcetype=splunkd component=UniversalForwarder HEC
+
+Search for Universal Forwarder events related to outputs.conf:
+index=_internal sourcetype=splunkd component=UniversalForwarder outputs.conf
+
+Search for Universal Forwarder events related to inputs.conf:
+index=_internal sourcetype=splunkd component=UniversalForwarder inputs.conf
+
+Search for Universal Forwarder events related to deployment apps:
+index=_internal sourcetype=splunkd component=UniversalForwarder deployment_apps
+
+Search for Universal Forwarder events related to the Splunk Add-on for Unix and Linux:
+index=_internal sourcetype=splunkd component=UniversalForwarder source=*splunk_TA_nix* 
+
+Search for Universal Forwarder events related to the Splunk Add-on for Microsoft Windows:
+index=_internal sourcetype=splunkd component=UniversalForwarder source=*splunk_ta_windows*
+
+Search for Universal Forwarder events related to the Splunk Add-on for VMware:
+index=_internal sourcetype=splunkd component=UniversalForwarder source=*splunk_ta_vmware*
+
+Search for Universal Forwarder events related to the Splunk Add-on for AWS:
+index=_internal sourcetype=splunkd component=UniversalForwarder source=*splunk_ta_aws*
+
+Search for Universal Forwarder events related to the Splunk Add-on for Microsoft Azure:
+index=_internal sourcetype=splunkd component=UniversalForwarder source=*splunk_ta_microsoft_azure*
+
+Search for Universal Forwarder events related to the Splunk Add-on for ServiceNow:
+index=_internal sourcetype=splunkd component=UniversalForwarder source=*splunk_ta_servicenow*
+
+Search for Universal Forwarder events related to the TCP input:
+index=_internal sourcetype=splunkd component=UniversalForwarder tcpin:
+
+Search for Universal Forwarder events related to the UDP input:
+index=_internal sourcetype=splunkd component=UniversalForwarder udpin:
+
+Search for Universal Forwarder events related to the scripted input:
+index=_internal sourcetype=splunkd component=UniversalForwarder scriptedinput
+
+Search for Universal Forwarder events related to the HTTP input:
+index=_internal sourcetype=splunkd component=UniversalForwarder httpinput
+
+Search for Universal Forwarder events related to the Modular Input:
+index=_internal sourcetype=splunkd component=UniversalForwarder ModularInputs
+
+Search for Universal Forwarder events related to the syslog input:
+index=_internal sourcetype=splunkd component=UniversalForwarder SyslogInput
+
+Search for Universal Forwarder events related to the Deployment Monitor:
+index=_internal sourcetype=splunkd component=UniversalForwarder DeploymentMonitor
+
+Search for Universal Forwarder events related to the Splunk HTTP Event Collector (HEC) input:
+index=_internal sourcetype=splunkd component=UniversalForwarder httpinput 
+
+Search for Universal Forwarder events related to the Splunk HTTP Event Collector (HEC) output:
+index=_internal sourcetype=splunkd component=UniversalForwarder HECOutputProc
+
+Search for Universal Forwarder events related to the Splunk Heavy Forwarder:
+index=_internal sourcetype=splunkd component=UniversalForwarder HeavyForwarder
+
+Search for Universal Forwarder events related to the Splunk Light Forwarder:
+index=_internal sourcetype=splunkd component=UniversalForwarder LightForwarder
+
+Search for Universal Forwarder events related to the Splunk HTTP Event Collector (HEC) token authentication:
+index=_internal sourcetype=splunkd component=UniversalForwarder TokenAuth
+
+Search for Universal Forwarder events related to the HTTP Event Collector (HEC) load balancer:
+index=_internal sourcetype=splunkd component=UniversalForwarder HECLoadBalancer
+
+Search for Universal Forwarder events related to the TCP output:
+index=_internal sourcetype=splunkd component=UniversalForwarder tcpout:
+
+Search for Universal Forwarder events related to the UDP output:
+index=_internal sourcetype=splunkd component=UniversalForwarder udpout:
+
+Search for Universal Forwarder events related to the HTTP output:
+index=_internal sourcetype=splunkd component=UniversalForwarder httpevent
+
+Search for Universal Forwarder events related to the queue:
+index=_internal sourcetype=splunkd component=UniversalForwarder Queue
+
+Search for Universal Forwarder events related to the metadata:
+index=_internal sourcetype=splunkd component=UniversalForwarder Metadata
+
+Search for Universal Forwarder events related to the Splunk HTTP Event Collector (HEC) token server:
+index=_internal sourcetype=splunkd component=UniversalForwarder TokenServer
+
+Search for Universal Forwarder events related to the metrics.log file:
+index=_internal sourcetype=splunkd component=UniversalForwarder source=*metrics.log
+
+Search for Universal Forwarder events related to the monitor input:
+index=_internal sourcetype=splunkd component=UniversalForwarder Monitor
+
+Search for Universal Forwarder events related to the scripted input status:
+index=_internal sourcetype=splunkd component=UniversalForwarder ScriptedInputStatus
+
+Search for Universal Forwarder events related to the SSL/TLS setup:
+index=_internal sourcetype=splunkd component=UniversalForwarder SSLConfig
+
+Search for Universal Forwarder events related to the deployment client status:
+index=_internal sourcetype=splunkd component=UniversalForwarder DeploymentClient
+
+Search for Universal Forwarder events related to the network input:
+index=_internal sourcetype=splunkd component=UniversalForwarder NetworkInput
+
+Search for Universal Forwarder events related to the syslog output:
+index=_internal sourcetype=splunkd component=UniversalForwarder SyslogOutput
+
+Search for Universal Forwarder events related to the HTTP output status:
+index=_internal sourcetype=splunkd component=UniversalForwarder HttpOutputProc
+
+Search for Universal Forwarder events related to the Splunk Add-on for Symantec Endpoint Protection:
+index=_internal sourcetype=splunkd component=UniversalForwarder source=*splunk_ta_sep*
+
+Search for Universal Forwarder events related to the SSL/TLS certificate verification:
+index=_internal sourcetype=splunkd component=UniversalForwarder SSLCertVerifier
+
+Search for Universal Forwarder events related to the deployment server status:
+index=_internal sourcetype=splunkd component=UniversalForwarder DeploymentServer
+
+Search for Universal Forwarder events related to the Splunk Add-on for F5 BIG-IP:
+index=_internal sourcetype=splunkd component=UniversalForwarder source=*splunk_ta_bigip*
+
+Search for Universal Forwarder events related to the Splunk Add-on for Cisco ASA:
+index=_internal sourcetype=splunkd component=UniversalForwarder source=*splunk_ta_cisco_asa*
+
+Search for Universal Forwarder events related to the Splunk Add-on for Cisco UCS:
+index=_internal sourcetype=splunkd component=UniversalForwarder source=*splunk_ta_cisco_ucs*
+
+Search for Universal Forwarder events related to the Splunk Add-on for Symantec Blue Coat:
+index=_internal sourcetype=splunkd component=UniversalForwarder source=*splunk_ta_bluecoat*
+
+Search for Universal Forwarder events related to the Splunk Add-on for Apache Web Server:
+index=_internal sourcetype=splunkd component=UniversalForwarder source=*splunk_ta_apache*
+
+Search for Universal Forwarder events related to the Splunk Add-on for Check Point Firewall:
+index=_internal sourcetype=splunkd component=UniversalForwarder source=*splunk_ta_checkpoint*
+
+Search for Universal Forwarder events related to the Splunk Add-on for Dell EMC Unity:
+index=_internal sourcetype=splunkd component=UniversalForwarder source=*splunk_ta_unity*
+
+Search for Universal Forwarder events related to the Splunk Add-on for Dell EMC Isilon:
+index=_internal sourcetype=splunkd component=UniversalForwarder source=*splunk_ta_isilon*
+
+Search for Universal Forwarder events related to the Splunk Add-on for Microsoft IIS:
+index=_internal sourcetype=splunkd component=UniversalForwarder source=*splunk_ta_microsoft_iis*
+
+Search for Universal Forwarder events related to the Splunk Add-on for NetApp:
+index=_internal sourcetype=splunkd component=UniversalForwarder source=*splunk_ta_ontap*
+
+Search for Universal Forwarder events related to the Splunk Add-on for Palo Alto Networks:
+index=_internal sourcetype=splunkd component=UniversalForwarder source=*splunk_ta_paloalto*
+
+Search for Universal Forwarder events related to the Splunk Add-on for VMware vSphere:
+index=_internal sourcetype=splunkd component=UniversalForwarder source=*splunk_ta_vcenter*
+
+Search for Universal Forwarder events related to the Splunk Add-on for Amazon Web Services (AWS):
+index=_internal sourcetype=splunkd component=UniversalForwarder source=*splunk_ta_aws*
+
+Search for Universal Forwarder events related to the Splunk Add-on for Microsoft Exchange:
+index=_internal sourcetype=splunkd component=UniversalForwarder source=*splunk_ta_exchange*
+
+Search for Universal Forwarder events related to the Splunk Add-on for Microsoft DNS:
+index=_internal sourcetype=splunkd component=UniversalForwarder source=*splunk_ta_microsoft_dns*
+
+Search for Universal Forwarder events related to the Splunk Add-on for Microsoft Active Directory:
+index=_internal sourcetype=splunkd component=UniversalForwarder source=*splunk_ta_windows_ad*
+
+Search for Universal Forwarder events related to the Splunk Add-on for Microsoft IIS:
+index=_internal sourcetype=splunkd component=UniversalForwarder source=*splunk_ta_microsoft_iis*
+
+Search for Universal Forwarder events related to the Splunk Add-on for Symantec Endpoint Protection:
+index=_internal sourcetype=splunkd component=UniversalForwarder source=*splunk_ta_sep*
+
+Search for Universal Forwarder events related to the Splunk Add-on for Microsoft Azure:
+index=_internal sourcetype=splunkd component=UniversalForwarder source=*splunk_ta_microsoft_azure*
+
+Search for Universal Forwarder events related to the Splunk Add-on for ServiceNow:
+index=_internal sourcetype=splunkd component=UniversalForwarder source=*splunk_ta_servicenow*
+
+Search for Universal Forwarder events related to the Splunk Add-on for Cisco AnyConnect:
+index=_internal sourcetype=splunkd component=UniversalForwarder source=*splunk_ta_cisco_anyconnect*
+
+Search for Universal Forwarder events related to the Splunk Add-on for JBoss Application Server:
+index=_internal sourcetype=splunkd component=UniversalForwarder source=*splunk_ta_jboss*
+
+Search for Universal Forwarder events related to the Splunk Add-on for Symantec Data Loss Prevention (DLP):
+index=_internal sourcetype=splunkd component=UniversalForwarder source=*splunk_ta_dlp*
+
+Search for Universal Forwarder events related to the Splunk Add-on for Apache Tomcat:
+index=_internal sourcetype=splunkd component=UniversalForwarder source=*splunk_ta_tomcat*
+
+Search for Universal Forwarder events related to the Splunk Add-on for IBM WebSphere Application Server:
+index=_internal sourcetype=splunkd component=UniversalForwarder source=*splunk_ta_websphere*
+
+Search for Universal Forwarder events related to the Splunk Add-on for Cisco Identity Services Engine (ISE):
+index=_internal sourcetype=splunkd component=UniversalForwarder source=*splunk_ta_cisco_ise*
+
+Search for Universal Forwarder events related to the Splunk Add-on for Akamai Cloud Security:
+index=_internal sourcetype=splunkd component=UniversalForwarder source=*splunk_ta_akamai*
+
+Search for Universal Forwarder events related to the Splunk Add-on for Oracle Database:
+index=_internal sourcetype=splunkd component=UniversalForwarder source=*splunk_ta_oracle*
+
+Search for Universal Forwarder events related to the Splunk Add-on for F5 BIG-IP:
+index=_internal sourcetype=splunkd component=UniversalForwarder source=*splunk_ta_bigip*
+
+Search for Universal Forwarder events related to the Splunk Add-on for Check Point Firewall:
+index=_internal sourcetype=splunkd component=UniversalForwarder source=*splunk_ta_checkpoint*
+
+Search for Universal Forwarder events related to the Splunk Add-on for IBM QRadar:
+index=_internal sourcetype=splunkd component=UniversalForwarder source=*splunk_ta_qradar*
+
+Search for Universal Forwarder events related to the Splunk Add-on for VMware vRealize Operations Manager:
+index=_internal sourcetype=splunkd component=UniversalForwarder source=*splunk_ta_vrops*
+
+Search for Universal Forwarder events related to the Splunk Add-on for Dell EMC VNX:
+index=_internal sourcetype=splunkd component=UniversalForwarder source=*splunk_ta_vnx*
+
+Search for Universal Forwarder events related to the Splunk Add-on for VMware Horizon:
+index=_internal sourcetype=splunkd component=UniversalForwarder source=*splunk_ta_horizon*
+
+Search for Universal Forwarder events related to the Splunk Add-on for IBM WebSphere MQ:
+index=_internal sourcetype=splunkd component=UniversalForwarder source=*splunk_ta_mq*
+
+Search for Universal Forwarder events related to the Splunk Add-on for Oracle Access Manager:
+index=_internal sourcetype=splunkd component=UniversalForwarder source=*splunk_ta_oam*
+
+Search for Universal Forwarder events related to the Splunk Add-on for IBM Security Identity Manager:
+index=_internal sourcetype=splunkd component=UniversalForwarder source=*splunk_ta_isim*
+
+Search for Universal Forwarder events related to the Splunk Add-on for Microsoft Office 365:
+index=_internal sourcetype=splunkd component=UniversalForwarder source=*splunk_ta_microsoft_office365*
+
+Search for Universal Forwarder events related to the Splunk Add-on for Palo Alto Networks Panorama:
+index=_internal sourcetype=splunkd component=UniversalForwarder source=*splunk_ta_panorama*
+
+Search for Universal Forwarder events related to the Splunk Add-on for Symantec VIP Access Manager:
+index=_internal sourcetype=splunkd component=UniversalForwarder source=*splunk_ta_symantec_vip*
+
+Search for Universal Forwarder events related to the Splunk Add-on for Apache Kafka:
+index=_internal sourcetype=splunkd component=UniversalForwarder source=*splunk_ta_kafka*
+
+Search for Universal Forwarder events related to the Splunk Add-on for Microsoft Windows DNS:
+index=_internal sourcetype=splunkd component=UniversalForwarder source=*splunk_ta_windows_dns*
