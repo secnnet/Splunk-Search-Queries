@@ -1,0 +1,335 @@
+Top blocked IPs:
+sourcetype="cisco:asa" action=drop
+| top limit=10 src_ip
+
+Top blocked ports:
+sourcetype="cisco:asa" action=drop
+| top limit=10 dest_port
+
+Top allowed protocols:
+sourcetype="cisco:asa" action=allow
+| top limit=10 protocol
+
+VPN connections:
+sourcetype="cisco:asa" "VPN session"
+| stats count by username
+
+Authentication failures:
+sourcetype="cisco:asa" "%ASA-5-111008"
+| stats count by username
+
+Inbound traffic by destination IP:
+sourcetype="cisco:asa" direction=inbound
+| stats sum(bytes) by dest_ip
+
+Outbound traffic by source IP:
+sourcetype="cisco:asa" direction=outbound
+| stats sum(bytes) by src_ip
+
+Firewall policy changes:
+sourcetype="cisco:asa" "%ASA-5-111010"
+| table _time, user, action, policy_name
+
+Top ICMP types:
+sourcetype="cisco:asa" icmp
+| top limit=10 icmp_type
+
+Top threats detected:
+sourcetype="cisco:asa" "%ASA-4-410" OR "%ASA-4-411"
+| top limit=10 threat_name
+
+Firewall restart events:
+sourcetype="cisco:asa" "%ASA-6-302014"
+| table _time, hostname, action
+
+Top source countries for blocked traffic:
+sourcetype="cisco:asa" action=drop
+| iplocation src_ip
+| top limit=10 Country
+
+Top destination countries for allowed traffic:
+sourcetype="cisco:asa" action=allow
+| iplocation dest_ip
+| top limit=10 Country
+
+Firewall configuration changes:
+sourcetype="cisco:asa" "%ASA-5-111005"
+| table _time, user, action, config_change
+
+Top connection build events by source IP:
+sourcetype="cisco:asa" "%ASA-6-302013"
+| top limit=10 src_ip
+
+Top connection teardown events by source IP:
+sourcetype="cisco:asa" "%ASA-6-302015"
+| top limit=10 src_ip
+
+Denied traffic by protocol:
+sourcetype="cisco:asa" action=deny
+| stats count by protocol
+
+Connections with high bytes transferred:
+sourcetype="cisco:asa" "%ASA-6-302013" OR "%ASA-6-302014"
+| where bytes>1000000
+| table _time, src_ip, dest_ip, bytes
+
+ACL rule changes:
+sourcetype="cisco:asa" "%ASA-5-111009"
+| table _time, user, action, acl_rule
+
+Top denied IP pairs:
+sourcetype="cisco:asa" action=deny
+| stats count by src_ip, dest_ip
+| sort - count limit=10
+
+Top allowed IP pairs:
+sourcetype="cisco:asa" action=allow
+| stats count by src_ip, dest_ip
+| sort - count limit=10
+
+Top VPN users by connection time:
+sourcetype="cisco:asa" "VPN session"
+| stats sum(duration) as total_time by username
+| sort - total_time limit=10
+
+Connections with high duration:
+sourcetype="cisco:asa" "%ASA-6-302013" OR "%ASA-6-302014"
+| where duration>3600
+| table _time, src_ip, dest_ip, duration
+
+SSH authentication events:
+sourcetype="cisco:asa" "%ASA-6-113"
+| table _time, user, action
+
+Top source IP addresses for SYN flood attacks:
+sourcetype="cisco:asa" "%ASA-4-733100"
+| top limit=10 src_ip
+
+Top destination IP addresses for SYN flood attacks:
+sourcetype="cisco:asa" "%ASA-4-733100"
+| top limit=10 dest_ip
+
+Top allowed inbound services:
+sourcetype="cisco:asa" action=allow direction=inbound
+| top limit=10 dest_service
+
+Top allowed outbound services:
+sourcetype="cisco:asa" action=allow direction=outbound
+| top limit=10 dest_service
+
+Firewall interface changes:
+sourcetype="cisco:asa" "%ASA-5-111003"
+| table _time, user, action, interface
+
+Top source IP addresses for packets exceeding connection limits:
+sourcetype="cisco:asa" "%ASA-4-419002"
+| top limit=10 src_ip
+
+Top source IP addresses for port scanning attacks:
+sourcetype="cisco:asa" "%ASA-4-733101"
+| top limit=10 src_ip
+
+Top destination IP addresses for port scanning attacks:
+sourcetype="cisco:asa" "%ASA-4-733101"
+| top limit=10 dest_ip
+
+Top source IP addresses for unauthorized access attempts:
+sourcetype="cisco:asa" "%ASA-4-733102"
+| top limit=10 src_ip
+
+Top destination IP addresses for unauthorized access attempts:
+sourcetype="cisco:asa" "%ASA-4-733102"
+| top limit=10 dest_ip
+
+Top source IP addresses for packets with invalid checksums:
+sourcetype="cisco:asa" "%ASA-4-507003"
+| top limit=10 src_ip
+
+Top destination IP addresses for packets with invalid checksums:
+sourcetype="cisco:asa" "%ASA-4-507003"
+| top limit=10 dest_ip
+
+Top source IP addresses for packets with invalid headers:
+sourcetype="cisco:asa" "%ASA-4-507001"
+| top limit=10 src_ip
+
+Top destination IP addresses for packets with invalid headers:
+sourcetype="cisco:asa" "%ASA-4-507001"
+| top limit=10 dest_ip
+
+Top source IP addresses for packets with invalid lengths:
+sourcetype="cisco:asa" "%ASA-4-507002"
+| top limit=10 src_ip
+
+Top destination IP addresses for packets with invalid lengths:
+sourcetype="cisco:asa" "%ASA-4-507002"
+| top limit=10 dest_ip
+
+Top source IP addresses for fragmented packets:
+sourcetype="cisco:asa" "%ASA-4-507004"
+| top limit=10 src_ip
+
+Top destination IP addresses for fragmented packets:
+sourcetype="cisco:asa" "%ASA-4-507004"
+| top limit=10 dest_ip
+
+Top source IP addresses for denied ICMP packets:
+sourcetype="cisco:asa" action=deny icmp
+| top limit=10 src_ip
+
+Top destination IP addresses for denied ICMP packets:
+sourcetype="cisco:asa" action=deny icmp
+| top limit=10 dest_ip
+
+Top source IP addresses for denied TCP packets:
+sourcetype="cisco:asa" action=deny tcp
+| top limit=10 src_ip
+
+Top destination IP addresses for denied TCP packets:
+sourcetype="cisco:asa" action=deny tcp
+| top limit=10 dest_ip
+
+Top source IP addresses for denied UDP packets:
+sourcetype="cisco:asa" action=deny udp
+| top limit=10 src_ip
+
+Top destination IP addresses for denied UDP packets:
+sourcetype="cisco:asa" action=deny udp
+| top limit=10 dest_ip
+
+Allowed connections by duration:
+sourcetype="cisco:asa" action=allow "%ASA-6-302013" OR "%ASA-6-302014"
+| stats avg(duration) as average_duration by src_ip, dest_ip
+| sort - average_duration limit=10
+
+Denied connections by duration:
+sourcetype="cisco:asa" action=deny "%ASA-6-302013" OR "%ASA-6-302014"
+| stats avg(duration) as average_duration by src_ip, dest_ip
+| sort - average_duration limit=10
+
+Top source IP addresses for denied GRE packets:
+sourcetype="cisco:asa" action=deny gre
+| top limit=10 src_ip
+
+Top destination IP addresses for denied GRE packets:
+sourcetype="cisco:asa" action=deny gre
+| top limit=10 dest_ip
+
+Connections with high packet rates:
+sourcetype="cisco:asa" "%ASA-6-302013" OR "%ASA-6-302014"
+| where packets>10000
+| table _time, src_ip, dest_ip, packets
+
+Connections with high byte rates:
+sourcetype="cisco:asa" "%ASA-6-302013" OR "%ASA-6-302014"
+| where bytes>1000000
+| table _time, src_ip, dest_ip, bytes
+
+Top source IP addresses for denied ESP packets:
+sourcetype="cisco:asa" action=deny esp
+| top limit=10 src_ip
+
+Top destination IP addresses for denied ESP packets:
+sourcetype="cisco:asa" action=deny esp
+| top limit=10 dest_ip
+
+Top source IP addresses for denied AH packets:
+sourcetype="cisco:asa" action=deny ah
+| top limit=10 src_ip
+
+Top destination IP addresses for denied AH packets:
+sourcetype="cisco:asa" action=deny ah
+| top limit=10 dest_ip
+
+Top source IP addresses for denied SCTP packets:
+sourcetype="cisco:asa" action=deny sctp
+| top limit=10 src_ip
+
+Top destination IP addresses for denied SCTP packets:
+sourcetype="cisco:asa" action=deny sctp
+| top limit=10 dest_ip
+
+Allowed connections by protocol:
+sourcetype="cisco:asa" action=allow
+| stats count by protocol
+| sort - count limit=10
+
+Denied connections by protocol:
+sourcetype="cisco:asa" action=deny
+| stats count by protocol
+| sort - count limit=10
+
+Top source IP addresses for denied IP packets:
+sourcetype="cisco:asa" action=deny ip
+| top limit=10 src_ip
+
+Top destination IP addresses for denied IP packets:
+sourcetype="cisco:asa" action=deny ip
+| top limit=10 dest_ip
+
+Top source IP addresses for denied IPIP packets:
+sourcetype="cisco:asa" action=deny ipip
+| top limit=10 src_ip
+
+Top destination IP addresses for denied IPIP packets:
+sourcetype="cisco:asa" action=deny ipip
+| top limit=10 dest_ip
+
+Top source IP addresses for denied IPv6 packets:
+sourcetype="cisco:asa" action=deny ipv6
+| top limit=10 src_ip
+
+Top destination IP addresses for denied IPv6 packets:
+sourcetype="cisco:asa" action=deny ipv6
+| top limit=10 dest_ip
+
+Allowed connections by interface:
+sourcetype="cisco:asa" action=allow
+| stats count by interface
+| sort - count limit=10
+
+Denied connections by interface:
+sourcetype="cisco:asa" action=deny
+| stats count by interface
+| sort - count limit=10
+
+Top source IP addresses for denied MPLS packets:
+sourcetype="cisco:asa" action=deny mpls
+| top limit=10 src_ip
+
+Top destination IP addresses for denied MPLS packets:
+sourcetype="cisco:asa" action=deny mpls
+| top limit=10 dest_ip
+
+Top source IP addresses for denied L2TP packets:
+sourcetype="cisco:asa" action=deny l2tp
+| top limit=10 src_ip
+
+Top destination IP addresses for denied L2TP packets:
+sourcetype="cisco:asa" action=deny l2tp
+| top limit=10 dest_ip
+
+Top source IP addresses for denied PPTP packets:
+sourcetype="cisco:asa" action=deny pptp
+| top limit=10 src_ip
+
+Top destination IP addresses for denied PPTP packets:
+sourcetype="cisco:asa" action=deny pptp
+| top limit=10 dest_ip
+
+Top source IP addresses for denied PPPoE packets:
+sourcetype="cisco:asa" action=deny pppoe
+| top limit=10 src_ip
+
+Top destination IP addresses for denied PPPoE packets:
+sourcetype="cisco:asa" action=deny pppoe
+| top limit=10 dest_ip
+
+Top source IP addresses for denied OSPF packets:
+sourcetype="cisco:asa" action=deny ospf
+| top limit=10 src_ip
+
+Top destination IP addresses for denied OSPF packets:
+sourcetype="cisco:asa" action=deny ospf
+| top limit=10 dest_ip
+
