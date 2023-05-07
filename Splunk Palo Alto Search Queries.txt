@@ -1,0 +1,326 @@
+Top source IPs generating the most traffic:
+index=SecnNetPAFW sourcetype=pan:traffic
+| top limit=10 src_ip
+
+Top destination IPs receiving the most traffic:
+index=SecnNetPAFW sourcetype=pan:traffic
+| top limit=10 dest_ip
+
+Top applications used on the network:
+index=SecnNetPAFW sourcetype=pan:traffic
+| top limit=10 app
+
+Top blocked applications:
+index=SecnNetPAFW sourcetype=pan:traffic action=deny
+| top limit=10 app
+
+Top threats detected by the firewall:
+index=SecnNetPAFW sourcetype=pan:threat
+| top limit=10 threatid
+
+Firewall traffic volume over time:
+index=SecnNetPAFW sourcetype=pan:traffic
+| timechart count by action
+
+Top users generating the most traffic:
+index=SecnNetPAFW sourcetype=pan:traffic
+| top limit=10 user
+
+Top protocols used in the network:
+index=SecnNetPAFW sourcetype=pan:traffic
+| top limit=10 protocol
+
+Traffic volume by destination port:
+index=SecnNetPAFW sourcetype=pan:traffic
+| top limit=10 dest_port
+
+Top threat categories:
+index=SecnNetPAFW sourcetype=pan:threat
+| top limit=10 category
+
+Threat events over time:
+index=SecnNetPAFW sourcetype=pan:threat
+| timechart count by severity
+
+Traffic events by action and rule:
+index=SecnNetPAFW sourcetype=pan:traffic
+| stats count by action, rule
+
+Top source and destination IP pairs:
+index=SecnNetPAFW sourcetype=pan:traffic
+| stats count by src_ip, dest_ip
+| sort -count
+| head 10
+
+Top inbound and outbound traffic by zone:
+index=SecnNetPAFW sourcetype=pan:traffic
+| stats sum(bytes) by src_zone, dest_zone
+
+Top countries by source IP address:
+index=SecnNetPAFW sourcetype=pan:traffic
+| iplocation src_ip
+| top limit=10 Country
+
+Top countries by destination IP address:
+index=SecnNetPAFW sourcetype=pan:traffic
+| iplocation dest_ip
+| top limit=10 Country
+
+Firewall traffic by source and destination zone:
+index=SecnNetPAFW sourcetype=pan:traffic
+| stats count by src_zone, dest_zone
+
+Events with high severity threats:
+index=SecnNetPAFW sourcetype=pan:threat severity=high
+| table _time, src_ip, dest_ip, threatid, category
+
+Blocked traffic events by application category:
+index=SecnNetPAFW sourcetype=pan:traffic action=deny
+| top limit=10 app_category
+
+Top URLs by user:
+index=SecnNetPAFW sourcetype=pan:url
+| top limit=10 url by user
+
+Connection attempts to potentially malicious destinations:
+index=SecnNetPAFW sourcetype=pan:traffic dest_ip IN (1.2.3.4, 5.6.7.8)
+| stats count by src_ip, dest_ip
+*****Replace the IP addresses (1.2.3.4, 5.6.7.8) with actual malicious IP addresses you want to monitor.*****
+
+Top denied destination ports:
+index=SecnNetPAFW sourcetype=pan:traffic action=deny
+| top limit=10 dest_port
+
+Top source IPs attempting to connect to blocked applications:
+index=SecnNetPAFW sourcetype=pan:traffic action=deny
+| top limit=10 src_ip by app
+
+Top destination IPs with denied connections:
+index=SecnNetPAFW sourcetype=pan:traffic action=deny
+| top limit=10 dest_ip
+
+Top users with denied connections:
+index=SecnNetPAFW sourcetype=pan:traffic action=deny
+| top limit=10 user
+
+Total traffic volume per user:
+index=SecnNetPAFW sourcetype=pan:traffic
+| stats sum(bytes) as total_bytes by user
+| sort -total_bytes
+
+Traffic patterns by hour of the day:
+index=SecnNetPAFW sourcetype=pan:traffic
+| timechart span=1h count by action
+
+Distribution of threat severity levels:
+index=SecnNetPAFW sourcetype=pan:threat
+| stats count by severity
+
+Top allowed applications by traffic volume:
+index=SecnNetPAFW sourcetype=pan:traffic action=allow
+| stats sum(bytes) as total_bytes by app
+| sort -total_bytes
+
+Distribution of events by log subtype:
+index=SecnNetPAFW sourcetype=pan:log
+| stats count by subtype
+
+Top 10 URL categories by traffic volume:
+index=SecnNetPAFW sourcetype=pan:url
+| stats sum(bytes) as total_bytes by category
+| sort -total_bytes
+| head 10
+
+Connections to specific destination IP addresses:
+index=SecnNetPAFW sourcetype=pan:traffic dest_ip IN (1.2.3.4, 5.6.7.8)
+| stats count by src_ip, dest_ip, action
+*****Replace the IP addresses (1.2.3.4, 5.6.7.8) with actual destination IP addresses you want to monitor.*****
+
+Denied traffic patterns by hour of the day:
+index=SecnNetPAFW sourcetype=pan:traffic action=deny
+| timechart span=1h count
+
+Top blocked destination IPs by application:
+index=SecnNetPAFW sourcetype=pan:traffic action=deny
+| top limit=10 dest_ip by app
+
+Distribution of traffic events by log action:
+index=SecnNetPAFW sourcetype=pan:traffic
+| stats count by action
+
+Top source IP addresses with the most denied connections:
+index=SecnNetPAFW sourcetype=pan:traffic action=deny
+| top limit=10 src_ip
+
+Top destination IP addresses with the most allowed connections:
+index=SecnNetPAFW sourcetype=pan:traffic action=allow
+| top limit=10 dest_ip
+
+Time-based distribution of events by log subtype:
+index=SecnNetPAFW sourcetype=pan:log
+| timechart count by subtype
+
+Threat events with medium severity:
+index=SecnNetPAFW sourcetype=pan:threat severity=medium
+| table _time, src_ip, dest_ip, threatid, category
+
+Top users with allowed connections:
+index=SecnNetPAFW sourcetype=pan:traffic action=allow
+| top limit=10 user
+
+Traffic patterns by day of the week:
+index=SecnNetPAFW sourcetype=pan:traffic
+| timechart span=1d count by action
+
+Top source and destination IP pairs with denied connections:
+index=SecnNetPAFW sourcetype=pan:traffic action=deny
+| stats count by src_ip, dest_ip
+| sort -count
+| head 10
+
+Top threat events by source IP address:
+index=SecnNetPAFW sourcetype=pan:threat
+| top limit=10 src_ip
+
+Top threat events by destination IP address:
+index=SecnNetPAFW sourcetype=pan:threat
+| top limit=10 dest_ip
+
+Distribution of allowed traffic by application category:
+index=SecnNetPAFW sourcetype=pan:traffic action=allow
+| top limit=10 app_category
+
+Top denied events by rule:
+index=SecnNetPAFW sourcetype=pan:traffic action=deny
+| top limit=10 rule
+
+Top allowed destination ports by traffic volume:
+index=SecnNetPAFW sourcetype=pan:traffic action=allow
+| stats sum(bytes) as total_bytes by dest_port
+| sort -total_bytes
+
+Connection attempts to specific source IP addresses:
+index=SecnNetPAFW sourcetype=pan:traffic src_ip IN (1.2.3.4, 5.6.7.8)
+| stats count by src_ip, dest_ip, action
+*****Replace the IP addresses (1.2.3.4, 5.6.7.8) with actual source IP addresses you want to monitor.*****
+
+Top threat events by user:
+index=SecnNetPAFW sourcetype=pan:threat
+| top limit=10 user
+
+Top threat categories by event count:
+index=SecnNetPAFW sourcetype=pan:threat
+| top limit=10 category
+
+Top applications by denied connection count:
+index=SecnNetPAFW sourcetype=pan:traffic action=deny
+| top limit=10 app
+
+Distribution of threat events by action:
+index=SecnNetPAFW sourcetype=pan:threat
+| stats count by action
+
+Top URL categories with denied connections:
+index=SecnNetPAFW sourcetype=pan:url action=deny
+| top limit=10 category
+
+Top source IP addresses with allowed connections:
+index=SecnNetPAFW sourcetype=pan:traffic action=allow
+| top limit=10 src_ip
+
+Top destination IP addresses for a specific application:
+index=SecnNetPAFW sourcetype=pan:traffic app=<Your_Application>
+| top limit=10 dest_ip
+*****Replace <Your_Application> with the specific application you want to monitor.*****
+
+Top source and destination IP pairs with allowed connections:
+index=SecnNetPAFW sourcetype=pan:traffic action=allow
+| stats count by src_ip, dest_ip
+| sort -count
+| head 10
+
+Top allowed applications by connection count:
+index=SecnNetPAFW sourcetype=pan:traffic action=allow
+| top limit=10 app
+
+Distribution of events by log type:
+index=SecnNetPAFW sourcetype=pan:log
+| stats count by log_type
+
+Top source countries with denied connections:
+index=SecnNetPAFW sourcetype=pan:traffic action=deny
+| top limit=10 src_country
+
+Top destination countries with allowed connections:
+index=SecnNetPAFW sourcetype=pan:traffic action=allow
+| top limit=10 dest_country
+
+Denied connections by rule and user:
+index=SecnNetPAFW sourcetype=pan:traffic action=deny
+| stats count by rule, user
+
+Top applications by bytes transferred:
+index=SecnNetPAFW sourcetype=pan:traffic
+| stats sum(bytes) as total_bytes by app
+| sort -total_bytes
+
+Distribution of traffic events by protocol:
+index=SecnNetPAFW sourcetype=pan:traffic
+| stats count by protocol
+
+Top denied applications by connection count:
+index=SecnNetPAFW sourcetype=pan:traffic action=deny
+| top limit=10 app
+
+Distribution of allowed traffic by application subcategory:
+index=SecnNetPAFW sourcetype=pan:traffic action=allow
+| top limit=10 app_subcategory
+
+Top threat events by threat ID:
+index=SecnNetPAFW sourcetype=pan:threat
+| top limit=10 threatid
+
+Top URL categories with allowed connections:
+index=SecnNetPAFW sourcetype=pan:url action=allow
+| top limit=10 category
+
+Top destination countries with denied connections:
+index=SecnNetPAFW sourcetype=pan:traffic action=deny
+| top limit=10 dest_country
+
+Top source countries with allowed connections:
+index=SecnNetPAFW sourcetype=pan:traffic action=allow
+| top limit=10 src_country
+
+Allowed connections by rule and user:
+index=SecnNetPAFW sourcetype=pan:traffic action=allow
+| stats count by rule, user
+
+Top threat event types:
+index=SecnNetPAFW sourcetype=pan:threat
+| top limit=10 event_type
+
+Distribution of denied traffic by application subcategory:
+index=SecnNetPAFW sourcetype=pan:traffic action=deny
+| top limit=10 app_subcategory
+
+Top allowed destination ports by connection count:
+index=SecnNetPAFW sourcetype=pan:traffic action=allow
+| top limit=10 dest_port
+
+Denied connections by source and destination zones:
+index=SecnNetPAFW sourcetype=pan:traffic action=deny
+| stats count by src_zone, dest_zone
+
+Top source zones with allowed connections:
+index=SecnNetPAFW sourcetype=pan:traffic action=allow
+| top limit=10 src_zone
+
+Top destination zones with denied connections:
+index=SecnNetPAFW sourcetype=pan:traffic action=deny
+| top limit=10 dest_zone
+
+Allowed connections by source and destination zones:
+index=SecnNetPAFW sourcetype=pan:traffic action=allow
+| stats count by src_zone, dest_zone
+
