@@ -1,0 +1,168 @@
+Search for blocked traffic from a specific source IP address:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic action=blocked src_ip=<source_ip>
+
+Search for successful VPN connections:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic event_type=vpn conn_state=success
+
+Search for failed login attempts on Checkpoint management interface:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic event_type=mgmt log_type=authentication action=failed
+
+Search for dropped packets due to IPS/IDS rules:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic action=dropped threat_protection=enabled
+
+Search for high traffic volume from a specific destination IP address:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic dest_ip=<destination_ip>
+| stats sum(bytes) as total_bytes by dest_ip
+| where total_bytes > <threshold>
+
+Search for traffic on a specific port:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic dest_port=<port_number>
+
+Search for denied traffic from a specific country:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic action=denied src_country=<country_code>
+
+Search for successful rule hits for a specific rule ID:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic rule_id=<rule_id> action=allowed
+
+Search for expired SSL certificates:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic event_type=certificate expiration_time<=now
+
+Search for traffic matching a specific intrusion prevention signature:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic event_type=intrusion signature=<signature_name>
+
+Search for dropped traffic due to a specific firewall policy rule:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic action=dropped rule_name=<rule_name>
+
+Search for traffic with a specific application or service:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic application=<application_name>
+
+Search for malware or virus events detected by Checkpoint Anti-Virus:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic event_type=antivirus action=detected
+
+Search for successful user logins to Checkpoint Firewall:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic event_type=authentication action=success
+
+Search for traffic with a specific protocol:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic protocol=<protocol_name>
+
+Search for traffic matching a specific URL or domain:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic url=<url_or_domain>
+
+Search for security events related to firewall policy changes:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic event_type=policy_change
+
+Search for dropped traffic due to a specific threat category:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic action=dropped threat_category=<threat_category>
+
+Search for traffic with a specific source or destination zone:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic src_zone=<source_zone> OR dest_zone=<destination_zone>
+
+Search for high connection counts from a specific source IP address:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic src_ip=<source_ip>
+| stats count by src_ip
+| where count > <threshold>
+
+Search for traffic with a specific source or destination user:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic src_user=<source_user> OR dest_user=<destination_user>
+
+Search for traffic matching a specific service or application category:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic service=<service_or_application_category>
+
+Search for security events related to VPN tunnel status changes:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic event_type=vpn status_change
+
+Search for dropped traffic due to a specific threat name:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic action=dropped threat_name=<threat_name>
+
+Search for traffic matching a specific source or destination network:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic src_network=<source_network> OR dest_network=<destination_network>
+
+Search for traffic matching a specific source or destination port:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic src_port=<source_port> OR dest_port=<destination_port>
+
+Search for security events related to administrator login activity:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic event_type=administrator_login
+
+Search for dropped traffic due to a specific application or service category:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic action=dropped service_category=<service_category>
+
+Search for traffic matching a specific source or destination interface:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic src_interface=<source_interface> OR dest_interface=<destination_interface>
+
+Search for security events related to threat intelligence feeds:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic event_type=threat_intelligence
+
+Search for traffic with a specific action taken (allowed, blocked, dropped, etc.):
+index=SecnNetCheckPointFW sourcetype=CP:Traffic action=<action>
+
+Search for security events related to intrusion attempts:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic event_type=intrusion
+
+Search for dropped traffic due to a specific source or destination country:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic action=dropped (src_country=<source_country> OR dest_country=<destination_country>)
+
+Search for security events related to firewall configuration changes:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic event_type=config_change
+
+Search for traffic matching a specific source or destination VLAN:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic src_vlan=<source_vlan> OR dest_vlan=<destination_vlan>
+
+Search for security events related to connection rate violations:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic event_type=connection_rate_violation
+
+Search for dropped traffic due to a specific threat severity level:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic action=dropped threat_severity=<severity_level>
+
+Search for traffic matching a specific source or destination MAC address:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic src_mac=<source_mac_address> OR dest_mac=<destination_mac_address>
+
+Search for security events related to web application attacks:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic event_type=web_application_attack
+
+Search for dropped traffic due to a specific security policy rule:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic action=dropped security_rule=<security_rule_name>
+
+Search for traffic matching a specific source or destination hostname:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic src_hostname=<source_hostname> OR dest_hostname=<destination_hostname>
+
+Search for security events related to denial-of-service (DoS) attacks:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic event_type=denial_of_service
+
+Search for dropped traffic due to a specific firewall blade or module:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic action=dropped blade=<firewall_blade>
+
+Search for security events related to privilege escalation attempts:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic event_type=privilege_escalation
+
+Search for traffic matching a specific source or destination NAT IP address:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic src_nat_ip=<source_nat_ip> OR dest_nat_ip=<destination_nat_ip>
+
+Search for security events related to endpoint compliance violations:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic event_type=endpoint_compliance
+
+Search for dropped traffic due to a specific source or destination IP range:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic action=dropped (src_ip>=<start_ip> AND src_ip<=<end_ip>) OR (dest_ip>=<start_ip> AND dest_ip<=<end_ip>)
+
+Search for security events related to data exfiltration attempts:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic event_type=data_exfiltration
+
+Search for traffic matching a specific source or destination MAC vendor:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic src_mac_vendor=<source_mac_vendor> OR dest_mac_vendor=<destination_mac_vendor>
+
+Search for dropped traffic due to a specific threat category and severity level:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic action=dropped threat_category=<threat_category> threat_severity=<severity_level>
+
+Search for security events related to suspicious network behavior:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic event_type=suspicious_network_behavior
+
+Search for dropped traffic due to a specific source or destination user:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic action=dropped (src_user=<source_user> OR dest_user=<destination_user>)
+
+Search for security events related to brute-force login attempts:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic event_type=brute_force_login
+
+Search for traffic matching a specific VPN community or group:
+index=SecnNetCheckPointFW sourcetype=CP:Traffic vpn_community=<vpn_community>
+
+Search for dropped traffic due to a specific threat action (e.g., exploit, malware):
+index=SecnNetCheckPointFW sourcetype=CP:Traffic action=dropped threat_action=<threat_action>
