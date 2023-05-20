@@ -1,373 +1,373 @@
-// Find instances of Nmap port scans
+Find instances of Nmap port scans:
 index=* sourcetype=*
 | search "Nmap"
 | table _time, src_ip, dest_ip, port, protocol
 
-// Detect use of Metasploit Framework
+Detect use of Metasploit Framework:
 index=* sourcetype=*
 | search "Metasploit"
 | table _time, src_ip, dest_ip, exploit, payload
 
-// Identify SQL injection attempts
+Identify SQL injection attempts:
 index=* sourcetype=*
 | regex ".(UNION ALL|SELECT\s+*).(FROM|WHERE).*(--|;)"
 
-// Look for brute force attacks using Hydra
+Look for brute force attacks using Hydra:
 index=* sourcetype=*
 | search "Hydra"
 | table _time, src_ip, dest_ip, user, password_attempt
 
-// Search for usage of the Wireshark packet sniffer
+Search for usage of the Wireshark packet sniffer:
 index=* sourcetype=*
 | search "Wireshark"
 | table _time, src_ip, dest_ip, protocol, packet_info
 
-// Detect use of the Mimikatz tool for credential dumping
+Detect use of the Mimikatz tool for credential dumping:
 index=* sourcetype=*
 | search "Mimikatz"
 | table _time, src_ip, dest_ip, username, password
 
-// Discover instances of the Nikto web vulnerability scanner
+Discover instances of the Nikto web vulnerability scanner:
 index=* sourcetype=*
 | search "Nikto"
 | table _time, src_ip, dest_ip, vulnerability, severity
 
-// Identify the use of the Burp Suite web application security testing tool
+Identify the use of the Burp Suite web application security testing tool:
 index=* sourcetype=*
 | search "Burp Suite"
 | table _time, src_ip, dest_ip, request, response
 
-// Detect instances of the Nessus vulnerability scanner
+Detect instances of the Nessus vulnerability scanner:
 index=* sourcetype=*
 | search "Nessus"
 | table _time, src_ip, dest_ip, vulnerability, severity
 
-// Find use of the John the Ripper password cracker
+Find use of the John the Ripper password cracker:
 index=* sourcetype=*
 | search "John the Ripper"
 | table _time, src_ip, dest_ip, hash, password_attempt
 
-// Detect use of the DirBuster directory brute-forcing tool
+Detect use of the DirBuster directory brute-forcing tool:
 index=* sourcetype=*
 | search "DirBuster"
 | table _time, src_ip, dest_ip, directory, response_code
 
-// Identify instances of the Acunetix web vulnerability scanner
+Identify instances of the Acunetix web vulnerability scanner:
 index=* sourcetype=*
 | search "Acunetix"
 | table _time, src_ip, dest_ip, vulnerability, severity
 
-// Look for usage of the PowerShell Empire post-exploitation framework
+Look for usage of the PowerShell Empire post-exploitation framework:
 index=* sourcetype=*
 | search "PowerShell Empire"
 | table _time, src_ip, dest_ip, module, command
 
-// Search for the use of the Cobalt Strike penetration testing framework
+Search for the use of the Cobalt Strike penetration testing framework:
 index=* sourcetype=*
 | search "Cobalt Strike"
 | table _time, src_ip, dest_ip, beacon_id, command
 
-// Find instances of the Armitage graphical cyber attack management tool
+Find instances of the Armitage graphical cyber attack management tool:
 index=* sourcetype=*
 | search "Armitage"
 | table _time, src_ip, dest_ip, module, target
 
-// Detect use of the Social-Engineer Toolkit (SET) for phishing and other social engineering attacks
+Detect use of the Social-Engineer Toolkit (SET) for phishing and other social engineering attacks:
 index=* sourcetype=*
 | search "SET"
 | table _time, src_ip, dest_ip, attack_type, target
 
-// Identify instances of the ZAP (Zed Attack Proxy) web application security scanner
+Identify instances of the ZAP (Zed Attack Proxy) web application security scanner:
 index=* sourcetype=*
 | search "ZAP"
 | table _time, src_ip, dest_ip, vulnerability, severity
 
-// Look for usage of the OWASP Dependency-Check tool for identifying vulnerable components
+Look for usage of the OWASP Dependency-Check tool for identifying vulnerable components:
 index=* sourcetype=*
 | search "Dependency-Check"
 | table _time, src_ip, dest_ip, component, vulnerability
 
-// Search for the use of the Wfuzz web application fuzzer
+Search for the use of the Wfuzz web application fuzzer:
 index=* sourcetype=*
 | search "Wfuzz"
 | table _time, src_ip, dest_ip, fuzz_string, response_code
 
-// Find instances of the Aircrack-ng wireless network security testing suite
+Find instances of the Aircrack-ng wireless network security testing suite:
 index=* sourcetype=*
 | search "Aircrack-ng"
 | table _time, src_ip, dest_ip, ssid, key
 
-// Detect use of the Recon-ng reconnaissance framework
+Detect use of the Recon-ng reconnaissance framework:
 index=* sourcetype=*
 | search "Recon-ng"
 | table _time, src_ip, dest_ip, module, target
 
-// Identify instances of the WPScan WordPress vulnerability scanner
+Identify instances of the WPScan WordPress vulnerability scanner:
 index=* sourcetype=*
 | search "WPScan"
 | table _time, src_ip, dest_ip, vulnerability, severity
 
-// Look for usage of the JoomScan Joomla vulnerability scanner
+Look for usage of the JoomScan Joomla vulnerability scanner:
 index=* sourcetype=*
 | search "JoomScan"
 | table _time, src_ip, dest_ip, vulnerability, severity
 
-// Search for the use of the Droopescan Drupal and SilverStripe vulnerability scanner
+Search for the use of the Droopescan Drupal and SilverStripe vulnerability scanner:
 index=* sourcetype=*
 | search "Droopescan"
 | table _time, src_ip, dest_ip, cms, vulnerability
 
-// Find instances of the BeEF (Browser Exploitation Framework) for exploiting web browsers
+Find instances of the BeEF (Browser Exploitation Framework) for exploiting web browsers:
 index=* sourcetype=*
 | search "BeEF"
 | table _time, src_ip, dest_ip, browser, exploit
 
-// Detect use of the Shodan search engine for finding vulnerable devices
+Detect use of the Shodan search engine for finding vulnerable devices:
 index=* sourcetype=*
 | search "Shodan"
 | table _time, src_ip, dest_ip, device_type, vulnerability
 
-// Identify instances of the Cuckoo Sandbox for malware analysis
+Identify instances of the Cuckoo Sandbox for malware analysis:
 index=* sourcetype=*
 | search "Cuckoo Sandbox"
 | table _time, src_ip, dest_ip, malware, analysis_result
 
-// Look for usage of the YARA malware identification and classification tool
+Look for usage of the YARA malware identification and classification tool:
 index=* sourcetype=*
 | search "YARA"
 | table _time, src_ip, dest_ip, signature, match
 
-// Search for the use of the Volatility memory forensics framework
+Search for the use of the Volatility memory forensics framework:
 index=* sourcetype=*
 | search "Volatility"
 | table _time, src_ip, dest_ip, process, memory_artifact
 
-// Find instances of the Xsser cross-site scripting (XSS) testing tool
+Find instances of the Xsser cross-site scripting (XSS) testing tool:
 index=* sourcetype=*
 | search "Xsser"
 | table _time, src_ip, dest_ip, url, xss_payload
 
-// Detect use of the Tcpdump packet capture and analysis tool
+Detect use of the Tcpdump packet capture and analysis tool:
 index=* sourcetype=*
 | search "Tcpdump"
 | table _time, src_ip, dest_ip, packet_info, protocol
 
-// Identify instances of the TShark network protocol analyzer
+Identify instances of the TShark network protocol analyzer:
 index=* sourcetype=*
 | search "TShark"
 | table _time, src_ip, dest_ip, packet_info, protocol
 
-// Look for usage of the Snort intrusion detection and prevention system (IDS/IPS)
+Look for usage of the Snort intrusion detection and prevention system (IDS/IPS):
 index=* sourcetype=*
 | search "Snort"
 | table _time, src_ip, dest_ip, signature, alert
 
-// Search for the use of the OSSEC host-based intrusion detection system (HIDS)
+Search for the use of the OSSEC host-based intrusion detection system (HIDS):
 index=* sourcetype=*
 | search "OSSEC"
 | table _time, src_ip, dest_ip, alert, details
 
-// Find instances of the Kismet wireless network detector, sniffer, and intrusion detection system
+Find instances of the Kismet wireless network detector, sniffer, and intrusion detection system:
 index=* sourcetype=*
 | search "Kismet"
 | table _time, src_ip, dest_ip, ssid, alert
 
-// Detect use of the hping3 network probing and packet crafting tool
+Detect use of the hping3 network probing and packet crafting tool:
 index=* sourcetype=*
 | search "hping3"
 | table _time, src_ip, dest_ip, packet_info, protocol
 
-// Identify instances of the Maltego open-source intelligence (OSINT) and graphical link analysis tool
+Identify instances of the Maltego open-source intelligence (OSINT) and graphical link analysis tool:
 index=* sourcetype=*
 | search "Maltego"
 | table _time, src_ip, dest_ip, entity, relationship
 
-// Look for usage of the Skipfish web application security reconnaissance tool
+Look for usage of the Skipfish web application security reconnaissance tool:
 index=* sourcetype=*
 | search "Skipfish"
 | table _time, src_ip, dest_ip, vulnerability, severity
 
-// Search for the use of the Ettercap network security tool for man-in-the-middle (MITM) attacks
+Search for the use of the Ettercap network security tool for man-in-the-middle (MITM) attacks:
 index=* sourcetype=*
 | search "Ettercap"
 | table _time, src_ip, dest_ip, mitm_method, target
 
-// Find instances of the Sqlmap SQL injection testing and exploitation tool
+Find instances of the Sqlmap SQL injection testing and exploitation tool:
 index=* sourcetype=*
 | search "Sqlmap"
 | table _time, src_ip, dest_ip, sql_injection_type, data_exfiltrated
 
-// Detect use of the Nishang PowerShell-based offensive security framework
+Detect use of the Nishang PowerShell-based offensive security framework:
 index=* sourcetype=*
 | search "Nishang"
 | table _time, src_ip, dest_ip, module, command
 
-// Identify instances of the Wireshark network protocol analyzer
+Identify instances of the Wireshark network protocol analyzer:
 index=* sourcetype=*
 | search "Wireshark"
 | table _time, src_ip, dest_ip, packet_info, protocol
 
-// Look for usage of the Burp Suite web application security testing platform
+Look for usage of the Burp Suite web application security testing platform:
 index=* sourcetype=*
 | search "Burp Suite"
 | table _time, src_ip, dest_ip, vulnerability, severity
 
-// Search for the use of the Nessus vulnerability scanner
+Search for the use of the Nessus vulnerability scanner:
 index=* sourcetype=*
 | search "Nessus"
 | table _time, src_ip, dest_ip, vulnerability, severity
 
-// Find instances of the Nikto web server scanner
+Find instances of the Nikto web server scanner:
 index=* sourcetype=*
 | search "Nikto"
 | table _time, src_ip, dest_ip, vulnerability, severity
 
-// Detect use of the Armitage cyber attack management tool for Metasploit
+Detect use of the Armitage cyber attack management tool for Metasploit:
 index=* sourcetype=*
 | search "Armitage"
 | table _time, src_ip, dest_ip, exploit, target
 
-// Identify instances of the Ncrack network authentication cracking tool
+Identify instances of the Ncrack network authentication cracking tool:
 index=* sourcetype=*
 | search "Ncrack"
 | table _time, src_ip, dest_ip, service, credentials
 
-// Look for usage of the Medusa password cracker
+Look for usage of the Medusa password cracker:
 index=* sourcetype=*
 | search "Medusa"
 | table _time, src_ip, dest_ip, service, credentials
 
-// Search for the use of the John the Ripper password cracker
+Search for the use of the John the Ripper password cracker:
 index=* sourcetype=*
 | search "John the Ripper"
 | table _time, src_ip, dest_ip, hash_type, cracked_password
 
-// Find instances of the Hydra password cracker
+Find instances of the Hydra password cracker:
 index=* sourcetype=*
 | search "Hydra"
 | table _time, src_ip, dest_ip, service, credentials
 
-// Detect use of the Cobalt Strike adversarial simulation and red team operations tool
+Detect use of the Cobalt Strike adversarial simulation and red team operations tool:
 index=* sourcetype=*
 | search "Cobalt Strike"
 | table _time, src_ip, dest_ip, teamserver, beacon
 
-// Identify instances of the DirBuster directory and file enumeration tool
+Identify instances of the DirBuster directory and file enumeration tool:
 index=* sourcetype=*
 | search "DirBuster"
 | table _time, src_ip, dest_ip, directory, file
 
-// Look for usage of the Fierce domain scanner
+Look for usage of the Fierce domain scanner:
 index=* sourcetype=*
 | search "Fierce"
 | table _time, src_ip, dest_ip, domain, dns_record
 
-// Search for the use of the Aircrack-ng suite for wireless network security testing
+Search for the use of the Aircrack-ng suite for wireless network security testing:
 index=* sourcetype=*
 | search "Aircrack-ng"
 | table _time, src_ip, dest_ip, ssid, cracked_key
 
-// Find instances of the Social-Engineer Toolkit (SET) for social engineering attacks
+Find instances of the Social-Engineer Toolkit (SET) for social engineering attacks:
 index=* sourcetype=*
 | search "SET"
 | table _time, src_ip, dest_ip, attack_type, target
 
-// Detect use of the Mimikatz credential extraction and manipulation tool
+Detect use of the Mimikatz credential extraction and manipulation tool:
 index=* sourcetype=*
 | search "Mimikatz"
 | table _time, src_ip, dest_ip, function, credentials
 
-// Identify instances of the Empire post-exploitation framework
+Identify instances of the Empire post-exploitation framework:
 index=* sourcetype=*
 | search "Empire"
 | table _time, src_ip, dest_ip, module, command
 
-// Look for usage of the Veil evasion framework for generating payloads
+Look for usage of the Veil evasion framework for generating payloads:
 index=* sourcetype=*
 | search "Veil"
 | table _time, src_ip, dest_ip, payload, target
 
-// Search for the use of the W3af web application attack and audit framework
+Search for the use of the W3af web application attack and audit framework:
 index=* sourcetype=*
 | search "W3af"
 | table _time, src_ip, dest_ip, vulnerability, severity
 
-// Find instances of the OWASP Zed Attack Proxy (ZAP) for web application security testing
+Find instances of the OWASP Zed Attack Proxy (ZAP) for web application security testing:
 index=* sourcetype=*
 | search "OWASP ZAP"
 | table _time, src_ip, dest_ip, vulnerability, severity
 
-// Detect use of the Gobuster directory and file enumeration tool
+Detect use of the Gobuster directory and file enumeration tool:
 index=* sourcetype=*
 | search "Gobuster"
 | table _time, src_ip, dest_ip, directory, file
 
-// Identify instances of the Routersploit exploitation framework for embedded devices
+Identify instances of the Routersploit exploitation framework for embedded devices:
 index=* sourcetype=*
 | search "Routersploit"
 | table _time, src_ip, dest_ip, exploit, target
 
-// Look for usage of the BeEF Browser Exploitation Framework
+Look for usage of the BeEF Browser Exploitation Framework:
 index=* sourcetype=*
 | search "BeEF"
 | table _time, src_ip, dest_ip, hooked_browser, command
 
-// Search for the use of the WPScan WordPress vulnerability scanner
+Search for the use of the WPScan WordPress vulnerability scanner:
 index=* sourcetype=*
 | search "WPScan"
 | table _time, src_ip, dest_ip, vulnerability, severity
 
-// Find instances of the Recon-ng web reconnaissance framework
+Find instances of the Recon-ng web reconnaissance framework:
 index=* sourcetype=*
 | search "Recon-ng"
 | table _time, src_ip, dest_ip, module, data
 
-// Detect use of the CME (CrackMapExec) network mapping and pentesting tool
+Detect use of the CME (CrackMapExec) network mapping and pentesting tool:
 index=* sourcetype=*
 | search "CrackMapExec"
 | table _time, src_ip, dest_ip, module, result
 
-// Identify instances of the NoSQLMap NoSQL database exploitation tool
+Identify instances of the NoSQLMap NoSQL database exploitation tool:
 index=* sourcetype=*
 | search "NoSQLMap"
 | table _time, src_ip, dest_ip, vulnerability, severity
 
-// Look for usage of the XSSF Cross-Site Scripting (XSS) exploitation framework
+Look for usage of the XSSF Cross-Site Scripting (XSS) exploitation framework:
 index=* sourcetype=*
 | search "XSSF"
 | table _time, src_ip, dest_ip, payload, target
 
-// Search for the use of the Sparta network infrastructure scanning and enumeration tool
+Search for the use of the Sparta network infrastructure scanning and enumeration tool:
 index=* sourcetype=*
 | search "Sparta"
 | table _time, src_ip, dest_ip, service, result
 
-// Find instances of the Yersinia network protocol exploitation tool
+Find instances of the Yersinia network protocol exploitation tool:
 index=* sourcetype=*
 | search "Yersinia"
 | table _time, src_ip, dest_ip, protocol, action
 
-// Detect use of the Sqlmap SQL injection tool
+Detect use of the Sqlmap SQL injection tool:
 index=* sourcetype=*
 | search "Sqlmap"
 | table _time, src_ip, dest_ip, vulnerability, severity
 
-// Identify instances of the Masscan port scanner
+Identify instances of the Masscan port scanner:
 index=* sourcetype=*
 | search "Masscan"
 | table _time, src_ip, dest_ip, port, service
 
-// Look for usage of the Ghost Phisher wireless and Ethernet auditing tool
+Look for usage of the Ghost Phisher wireless and Ethernet auditing tool:
 index=* sourcetype=*
 | search "Ghost Phisher"
 | table _time, src_ip, dest_ip, attack_type, target
 
-// Search for the use of the Commix command injection exploitation tool
+Search for the use of the Commix command injection exploitation tool:
 index=* sourcetype=*
 | search "Commix"
 | table _time, src_ip, dest_ip, vulnerability, command
 
-// Find instances of the BetterCAP network reconnaissance and exploitation tool
+Find instances of the BetterCAP network reconnaissance and exploitation tool:
 index=* sourcetype=*
 | search "BetterCAP"
 | table _time, src_ip, dest_ip, module, action
