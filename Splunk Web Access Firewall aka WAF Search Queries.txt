@@ -1,0 +1,182 @@
+Find all WAF blocks for a specific source IP address:
+sourcetype=waf_logs src_ip=<source_ip> action=block
+
+Identify the top 10 blocked URLs by the WAF:
+sourcetype=waf_logs action=block
+| top limit=10 url
+
+Analyze WAF events related to SQL injection attacks:
+sourcetype=waf_logs attack_type="SQL Injection"
+
+Detect WAF events indicating cross-site scripting (XSS) attacks:
+sourcetype=waf_logs attack_type="Cross-Site Scripting"
+
+Find WAF events related to directory traversal attacks:
+sourcetype=waf_logs attack_type="Directory Traversal"
+
+Identify WAF events indicating brute force login attempts:
+sourcetype=waf_logs attack_type="Brute Force" login_attempt=true
+
+Investigate WAF events for a specific destination IP address:
+sourcetype=waf_logs dest_ip=<destination_ip>
+
+Analyze WAF events indicating potential DDoS attacks:
+sourcetype=waf_logs attack_type="DDoS"
+
+Find WAF events with high threat levels:
+sourcetype=waf_logs threat_level="High"
+
+Monitor WAF logs for events indicating potential security policy violations:
+sourcetype=waf_logs action="Violation"
+
+Identify the top 5 WAF events with the highest threat level:
+sourcetype=waf_logs
+| top limit=5 threat_level
+
+Find WAF events indicating suspicious file uploads:
+sourcetype=waf_logs attack_type="File Upload" status="Blocked"
+
+Analyze WAF events indicating potential bot traffic:
+sourcetype=waf_logs user_agent="*bot*" OR user_agent="*crawler*"
+
+Identify WAF events related to known malicious IP addresses:
+sourcetype=waf_logs src_ip=(*malicious_ip1* OR *malicious_ip2* OR *malicious_ip3*)
+
+Monitor WAF logs for events indicating tampering attempts:
+sourcetype=waf_logs attack_type="Tampering"
+
+Detect WAF events indicating suspicious HTTP methods:
+sourcetype=waf_logs attack_type="Suspicious HTTP Method"
+
+Identify WAF events related to known web application vulnerabilities:
+sourcetype=waf_logs attack_type="Known Vulnerability"
+
+Find WAF events indicating potential server misconfigurations:
+sourcetype=waf_logs attack_type="Server Misconfiguration"
+
+Analyze WAF events indicating suspicious file inclusion attempts:
+sourcetype=waf_logs attack_type="File Inclusion"
+
+Monitor WAF logs for events indicating potential evasion techniques:
+sourcetype=waf_logs attack_type="Evasion"
+
+Identify the top 10 blocked countries by the WAF:
+sourcetype=waf_logs action=block
+| top limit=10 geoip_country_name
+
+Analyze WAF events indicating potential XML External Entity (XXE) attacks:
+sourcetype=waf_logs attack_type="XML External Entity"
+
+Find WAF events indicating suspicious user agent activity:
+sourcetype=waf_logs user_agent="*curl*" OR user_agent="*wget*"
+
+Identify WAF events indicating potential server-side code injection attacks:
+sourcetype=waf_logs attack_type="Server-Side Code Injection"
+
+Monitor WAF logs for events indicating potential file system access attempts:
+sourcetype=waf_logs attack_type="File System Access"
+
+Analyze WAF events indicating potential server-side request forgery (SSRF) attacks:
+sourcetype=waf_logs attack_type="Server-Side Request Forgery"
+
+Identify WAF events indicating potential remote code execution (RCE) attempts:
+sourcetype=waf_logs attack_type="Remote Code Execution"
+
+Find WAF events indicating potential malicious file downloads:
+sourcetype=waf_logs attack_type="File Download" status="Blocked"
+
+Monitor WAF logs for events indicating potential session hijacking attempts:
+sourcetype=waf_logs attack_type="Session Hijacking"
+
+Analyze WAF events indicating potential security policy bypass attempts:
+sourcetype=waf_logs attack_type="Security Policy Bypass"
+
+Identify WAF events indicating potential LDAP injection attacks:
+sourcetype=waf_logs attack_type="LDAP Injection"
+
+Find WAF events indicating potential XML injection attacks:
+sourcetype=waf_logs attack_type="XML Injection"
+
+Analyze WAF events indicating potential server-side template injection attacks:
+sourcetype=waf_logs attack_type="Server-Side Template Injection"
+
+Monitor WAF logs for events indicating potential HTTP response splitting attacks:
+sourcetype=waf_logs attack_type="HTTP Response Splitting"
+
+Identify WAF events indicating potential command injection attacks:
+sourcetype=waf_logs attack_type="Command Injection"
+
+Detect WAF events indicating potential cross-site request forgery (CSRF) attacks:
+sourcetype=waf_logs attack_type="Cross-Site Request Forgery"
+
+Identify WAF events indicating potential server-side request smuggling attacks:
+sourcetype=waf_logs attack_type="Server-Side Request Smuggling"
+
+Find WAF events indicating potential HTTP parameter pollution attacks:
+sourcetype=waf_logs attack_type="HTTP Parameter Pollution"
+
+Analyze WAF events indicating potential session fixation attacks:
+sourcetype=waf_logs attack_type="Session Fixation"
+
+Monitor WAF logs for events indicating potential server-side include (SSI) injection attacks:
+sourcetype=waf_logs attack_type="Server-Side Include Injection"
+
+Identify WAF events indicating potential server-side deserialization attacks:
+sourcetype=waf_logs attack_type="Server-Side Deserialization"
+
+Find WAF events indicating potential HTTP smuggling attacks:
+sourcetype=waf_logs attack_type="HTTP Smuggling"
+
+Analyze WAF events indicating potential open redirect attacks:
+sourcetype=waf_logs attack_type="Open Redirect"
+
+Monitor WAF logs for events indicating potential clickjacking attempts:
+sourcetype=waf_logs attack_type="Clickjacking"
+
+Identify WAF events indicating potential HTTP protocol violations:
+sourcetype=waf_logs attack_type="HTTP Protocol Violation"
+
+Detect WAF events indicating potential server-side request forgery (SSRF) attacks with specific target domains:
+sourcetype=waf_logs attack_type="Server-Side Request Forgery" dest_domain=<target_domain>
+
+Identify WAF events indicating potential remote file inclusion (RFI) attacks:
+sourcetype=waf_logs attack_type="Remote File Inclusion"
+
+Find WAF events indicating potential HTTP parameter tampering attacks:
+sourcetype=waf_logs attack_type="HTTP Parameter Tampering"
+
+Analyze WAF events indicating potential HTTP response tampering attacks:
+sourcetype=waf_logs attack_type="HTTP Response Tampering"
+
+Monitor WAF logs for events indicating potential server-side template injection attacks with specific template engines:
+sourcetype=waf_logs attack_type="Server-Side Template Injection" template_engine=<template_engine>
+
+Identify WAF events indicating potential server-side business logic attacks:
+sourcetype=waf_logs attack_type="Server-Side Business Logic"
+
+Find WAF events indicating potential HTTP request smuggling attacks:
+sourcetype=waf_logs attack_type="HTTP Request Smuggling"
+
+Analyze WAF events indicating potential server-side template injection attacks with specific payloads:
+sourcetype=waf_logs attack_type="Server-Side Template Injection" payload=<specific_payload>
+
+Monitor WAF logs for events indicating potential HTTP session poisoning attempts:
+sourcetype=waf_logs attack_type="HTTP Session Poisoning"
+
+Identify WAF events indicating potential server-side command execution attacks:
+sourcetype=waf_logs attack_type="Server-Side Command Execution"
+
+Detect WAF events indicating potential HTTP/2 protocol attacks:
+sourcetype=waf_logs attack_type="HTTP/2 Protocol Attack"
+
+Identify WAF events indicating potential server-side script injection attacks:
+sourcetype=waf_logs attack_type="Server-Side Script Injection"
+
+Find WAF events indicating potential HTTP session hijacking attempts:
+sourcetype=waf_logs attack_type="HTTP Session Hijacking"
+
+Analyze WAF events indicating potential HTTP referer spoofing attacks:
+sourcetype=waf_logs attack_type="HTTP Referer Spoofing"
+
+Monitor WAF logs for events indicating potential HTML injection attacks:
+sourcetype=waf_logs attack_type="HTML Injection"
